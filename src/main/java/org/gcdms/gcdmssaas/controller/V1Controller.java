@@ -2,8 +2,7 @@ package org.gcdms.gcdmssaas.controller;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.gcdms.gcdmssaas.payload.response.CustomApiResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.gcdms.gcdmssaas.model.CustomApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -18,7 +17,7 @@ import static org.gcdms.gcdmssaas.utility.AppConst.getCurrentTime;
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1")
 @Slf4j(topic = "RestController")
-public class RestController {
+public class V1Controller {
 
     /**
      * @apiNote test api
@@ -27,7 +26,7 @@ public class RestController {
     @NonNull
     @GetMapping
     private Mono<ResponseEntity<CustomApiResponse<String>>> testApi() {
-        log.info("inside get all employees controller");
+        log.info("inside test api controller");
         CustomApiResponse<String> response = new CustomApiResponse<>();
         response.setStatusCode(HttpStatus.OK.value());
         response.setMessage("Success");
@@ -35,4 +34,6 @@ public class RestController {
         response.setTimestamp(getCurrentTime());
         return Mono.just(ResponseEntity.ok(response)) ;
     }
+
+
 }

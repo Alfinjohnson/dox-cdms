@@ -1,4 +1,4 @@
-package org.gcdms.gcdmssaas.payload.response;
+package org.gcdms.gcdmssaas.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
