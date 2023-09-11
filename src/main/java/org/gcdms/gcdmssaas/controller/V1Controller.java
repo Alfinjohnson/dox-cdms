@@ -35,7 +35,7 @@ public class V1Controller {
      * */
     @NonNull
     @GetMapping
-    private Mono<ResponseEntity<CustomApiResponse<String>>> testApi() {
+    private Mono<ResponseEntity<CustomApiResponse<String>>> testApplication() {
         log.info("inside test api controller");
         CustomApiResponse<String> response = new CustomApiResponse<>();
         response.setStatusCode(HttpStatus.OK.value());
@@ -46,12 +46,12 @@ public class V1Controller {
     }
 
     /**
-     * @return Up on Success return, application running successfully
-     * @apiNote testDB api
+     * @return Up on Success return,
+     * @apiNote createConfiguration api
      */
     @NonNull
-    @PostMapping
-    private Mono<ResponseEntity<CustomApiResponse<Long>>> testDB(@NonNull @RequestBody CreateConfigurationRequest createConfigurationRequest) {
+    @PostMapping(path = "/configuration")
+    private Mono<ResponseEntity<CustomApiResponse<Long>>> createConfiguration(@NonNull @RequestBody CreateConfigurationRequest createConfigurationRequest) {
         return configurationService.createConfiguration(createConfigurationRequest)
                 .map(savedId -> {
                     CustomApiResponse<Long> response = new CustomApiResponse<>();
