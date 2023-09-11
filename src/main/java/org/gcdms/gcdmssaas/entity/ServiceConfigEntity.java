@@ -1,8 +1,6 @@
-package org.gcdms.gcdmssaas.entity.config.type;
+package org.gcdms.gcdmssaas.entity;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
 import lombok.*;
-import org.gcdms.gcdmssaas.entity.config.ConfigurationEntity;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -15,24 +13,24 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "boolean_config")
+@Table(name = "type_config")
 @Getter
 @Setter
 @ToString
-public class BooleanConfigEntity {
+public class ServiceConfigEntity {
 
     @Id
     @Column("id")
     private Long id;
 
     @Column("configuration_id")
-    private Long configuration_id;
-
-    @Column("value")
-    private boolean value;
+    private Long configurationId;
 
     @Transient
     private ConfigurationEntity configurationEntity;
+
+    @Column("service_id")
+    private Long serviceId;
 
     @LastModifiedDate
     @Column( "modified_datetime")

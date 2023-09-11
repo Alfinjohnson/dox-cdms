@@ -1,9 +1,7 @@
-package org.gcdms.gcdmssaas.entity.config;
+package org.gcdms.gcdmssaas.entity;
 
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.*;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 import java.util.Date;
@@ -34,6 +32,7 @@ public class ConfigurationEntity {
 
     @Column("created_userid")
     private Long createdUserId;
+
 
     @Column("last_modified_userid")
     private Long lastModifiedUserId;

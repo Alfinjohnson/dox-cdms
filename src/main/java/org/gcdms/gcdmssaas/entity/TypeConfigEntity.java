@@ -1,7 +1,6 @@
-package org.gcdms.gcdmssaas.entity.config;
+package org.gcdms.gcdmssaas.entity;
 
 import lombok.*;
-import org.gcdms.gcdmssaas.entity.config.ConfigurationEntity;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
