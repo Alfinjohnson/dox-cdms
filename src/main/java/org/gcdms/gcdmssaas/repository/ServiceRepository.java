@@ -5,7 +5,7 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * Configuration repository
+ * Service Repository
  */
 @Repository
 public interface ServiceRepository extends ReactiveCrudRepository<ServiceEntity, Long> {
