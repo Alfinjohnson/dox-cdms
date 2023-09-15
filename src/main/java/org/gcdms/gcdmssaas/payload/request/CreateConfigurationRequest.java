@@ -3,7 +3,6 @@ package org.gcdms.gcdmssaas.payload.request;
 import lombok.*;
 import org.gcdms.gcdmssaas.model.ConfigurationDataModel;
 
-import java.util.List;
 
 @Getter
 @Setter
