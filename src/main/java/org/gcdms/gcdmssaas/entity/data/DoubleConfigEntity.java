@@ -1,4 +1,4 @@
-package org.gcdms.gcdmssaas.entity.type;
+package org.gcdms.gcdmssaas.entity.data;
 
 public class DoubleConfigEntity {
     

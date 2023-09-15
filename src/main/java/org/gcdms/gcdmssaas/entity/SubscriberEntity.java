@@ -4,45 +4,44 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
+/**
+ * Entity for subscriber
+ */
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "type_config")
+@Table(name = "subscriber")
 @Getter
 @Setter
 @ToString
-public class ServiceConfigEntity {
-
+public final class SubscriberEntity {
     @Id
     @Column("id")
     private Long id;
 
-    @Column("configuration_id")
-    private Long configurationId;
+    @Column("name")
+    private String name;
 
-    @Transient
-    private ConfigurationEntity configurationEntity;
-
-    @Column("service_id")
-    private Long serviceId;
+    @Column("description")
+    private String description;
 
     @LastModifiedDate
     @Column( "modified_datetime")
-    private Date modifiedDateTime;
+    private LocalDateTime modifiedDateTime;
 
     @CreatedDate
     @Column("created_datetime")
-    private Date createdDateTime;
+    private LocalDateTime createdDateTime;
 
     @Column("created_userid")
     private Long createdUserId;
 
     @Column("last_modified_userid")
     private Long lastModifiedUserId;
+
 }

@@ -4,8 +4,12 @@ import lombok.*;
 import org.springframework.data.annotation.*;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
-import java.util.Date;
 
+import java.time.LocalDateTime;
+
+/**
+ * Entity for configuration
+ */
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,7 +17,7 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
-public class ConfigurationEntity {
+public final class ConfigurationEntity {
 
     @Id
     @Column("id")
@@ -22,13 +26,16 @@ public class ConfigurationEntity {
     @Column("name")
     private String name;
 
+    @Column("description")
+    private String description;
+
     @LastModifiedDate
     @Column( "modified_datetime")
-    private Date modifiedDateTime;
+    private LocalDateTime modifiedDateTime;
 
     @CreatedDate
     @Column("created_datetime")
-    private Date createdDateTime;
+    private LocalDateTime createdDateTime;
 
     @Column("created_userid")
     private Long createdUserId;

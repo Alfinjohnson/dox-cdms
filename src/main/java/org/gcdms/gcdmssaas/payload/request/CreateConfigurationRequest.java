@@ -12,7 +12,7 @@ import java.util.List;
 @ToString
 public class CreateConfigurationRequest {
 
-    private String name;
+    private String configuration_name;
 
     private ConfigurationDataModel<?> data;
 }

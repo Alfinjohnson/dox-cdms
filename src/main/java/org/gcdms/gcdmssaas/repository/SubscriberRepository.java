@@ -1,13 +1,13 @@
 package org.gcdms.gcdmssaas.repository;
 
-import org.gcdms.gcdmssaas.entity.TypeConfigEntity;
+import org.gcdms.gcdmssaas.entity.SubscriberEntity;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * TypeConfig repository
+ * Service Repository
  */
 @Repository
-public interface TypeConfigRepository extends ReactiveCrudRepository<TypeConfigEntity, Long> {
+public interface SubscriberRepository extends ReactiveCrudRepository<SubscriberEntity, Long> {
 
 }

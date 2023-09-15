@@ -3,6 +3,9 @@ package org.gcdms.gcdmssaas.expectionHandler;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+/**
+ * Custom Exception class created to handle different runtime exceptions
+ */
 public class CustomException extends RuntimeException {
     @Getter
     private final HttpStatus status;

@@ -12,52 +12,55 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
+
 import static org.gcdms.gcdmssaas.utility.AppConst.getCurrentTime;
 
 /**
- * resetController
+ * Configuration Controller class
  */
 @org.springframework.web.bind.annotation.RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/configuration")
 @Slf4j(topic = "RestController")
-public class V1Controller {
+public class ConfigurationController {
 
     @Autowired
     private final ConfigurationService configurationService;
 
-    public V1Controller(ConfigurationService configurationService) {
+    public ConfigurationController(ConfigurationService configurationService) {
         this.configurationService = configurationService;
     }
 
     /**
-     * @apiNote test api
-     * @return Up on Success return, application running successfully
+     * @apiNote api design for testing application
+     * @return Up on Success return, "application running successfully", String
      * */
     @NonNull
-    @GetMapping
+    @GetMapping(path = "/test")
     private Mono<ResponseEntity<CustomApiResponse<String>>> testApplication() {
-        log.info("inside test api controller");
+        log.info("controller: test api");
         CustomApiResponse<String> response = new CustomApiResponse<>();
         response.setStatusCode(HttpStatus.OK.value());
         response.setMessage("Success");
-        response.setData("application running successfully");
+        response.setData(Collections.singletonList("application running successfully"));
         response.setTimestamp(getCurrentTime());
         return Mono.just(ResponseEntity.ok(response)) ;
     }
 
     /**
-     * @return Up on Success return,
-     * @apiNote createConfiguration api
+     * @return configuration Id,
+     * @apiNote endpoint for creating new Configuration
      */
     @NonNull
-    @PostMapping(path = "/configuration")
+    @PostMapping
     private Mono<ResponseEntity<CustomApiResponse<Long>>> createConfiguration(@NonNull @RequestBody CreateConfigurationRequest createConfigurationRequest) {
+        log.info("controller: createConfiguration");
         return configurationService.createConfiguration(createConfigurationRequest)
                 .map(savedId -> {
                     CustomApiResponse<Long> response = new CustomApiResponse<>();
                     response.setStatusCode(HttpStatus.OK.value());
                     response.setMessage("Success");
-                    response.setData(savedId);
+                    response.setData(Collections.singletonList(savedId));
                     response.setTimestamp(getCurrentTime());
                     return ResponseEntity.ok(response);
                 });

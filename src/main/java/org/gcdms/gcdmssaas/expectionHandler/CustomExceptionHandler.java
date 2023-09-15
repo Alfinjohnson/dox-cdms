@@ -11,6 +11,9 @@ import reactor.core.publisher.Mono;
 
 import static org.gcdms.gcdmssaas.utility.AppConst.getCurrentTime;
 
+/**
+ * CustomExceptionHandler class
+ */
 @ControllerAdvice
 @Order(-2) // Set an order if needed to control exception handler precedence
 public class CustomExceptionHandler {
@@ -24,7 +27,4 @@ public class CustomExceptionHandler {
         );
         return Mono.just(ResponseEntity.status(ex.getStatus()).body(errorResponse));
     }
-
-    // Define getCurrentTime method here if not already defined
-
 }
