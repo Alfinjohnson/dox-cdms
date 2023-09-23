@@ -30,16 +30,16 @@ public final class BooleanDataEntity {
     private Long id;
 
     @Column("configuration_id")
-    private Long configuration_id;
+    private Long configurationId;
 
     @Column("subscriber_id")
     private Long subscriberId;
 
-    @Column("data_type_id")
-    private Long dataTypeId;
+    @Column("data_type")
+    private String dataType;
 
     @Column("value")
-    private boolean value;
+    private Boolean value;
 
     @LastModifiedDate
     @Column( "modified_datetime")
@@ -63,4 +63,5 @@ public final class BooleanDataEntity {
 
     @Transient
     private DataTypeEntity dataTypeEntity;
+
 }

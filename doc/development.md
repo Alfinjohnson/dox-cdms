@@ -1,0 +1,1 @@
+Not strongly caching class [org.gcdms.gcdmssaas.entity.SubscriberEntity] because it is not cache-safe

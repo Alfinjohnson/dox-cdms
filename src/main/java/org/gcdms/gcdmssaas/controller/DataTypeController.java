@@ -3,10 +3,13 @@ package org.gcdms.gcdmssaas.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.gcdms.gcdmssaas.model.CustomApiResponse;
+import org.gcdms.gcdmssaas.payload.request.CreateDataTypeRequest;
 import org.gcdms.gcdmssaas.payload.request.CreateSubscriberRequest;
+import org.gcdms.gcdmssaas.payload.response.CreateDataTypeResponse;
 import org.gcdms.gcdmssaas.payload.response.CreateSubscriberResponse;
+import org.gcdms.gcdmssaas.payload.response.FetchAllDataTypeResponse;
 import org.gcdms.gcdmssaas.payload.response.FetchAllSubscriberResponse;
-import org.gcdms.gcdmssaas.service.SubscriberService;
+import org.gcdms.gcdmssaas.service.DataTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,55 +22,54 @@ import java.util.Collections;
 import static org.gcdms.gcdmssaas.utility.AppConst.getCurrentTime;
 
 /**
- * Subscriber resetController
+ * Data type resetController
  */
 @RestController
-@RequestMapping("/api/v1/subscriber")
-@Slf4j(topic = "Subscriber RestController")
-public class SubscriberController {
+@RequestMapping("/api/v1/data-type")
+@Slf4j(topic = "DataType RestController")
+public class DataTypeController {
 
     /**
-     * subscriber Service autowired
+     * datatype Service autowired
      */
     @Autowired
-    private final SubscriberService subscriberService;
+    private final DataTypeService dataTypeService;
 
-    public SubscriberController( SubscriberService subscriberService) {
-        this.subscriberService = subscriberService;
+    public DataTypeController(DataTypeService dataTypeService) {
+        this.dataTypeService = dataTypeService;
     }
 
-
     /**
-     * @apiNote api for fetching all subscriber information
-     * @return List of  subscriber information
+     * @apiNote api for fetching all the datatype information
+     * @return List of  datatype information
      */
     @NonNull
     @GetMapping
-    private Mono<ResponseEntity<CustomApiResponse<FetchAllSubscriberResponse>>> fetchAllSubscriber() {
-        log.info("controller: fetchAllSubscriber ");
-        return subscriberService.fetchAllSubscriber()
+    private Mono<ResponseEntity<CustomApiResponse<FetchAllDataTypeResponse>>> fetchAllDatatype() {
+        log.info("controller: fetchAllDatatype ");
+        return dataTypeService.fetchAllDatatype()
                 .collectList() // Collect all emitted items into a List
-                .map(subscribers -> {
-                    CustomApiResponse<FetchAllSubscriberResponse> response = new CustomApiResponse<>();
+                .map(datatype -> {
+                    CustomApiResponse<FetchAllDataTypeResponse> response = new CustomApiResponse<>();
                     response.setStatusCode(HttpStatus.OK.value());
                     response.setMessage("Success");
-                    response.setData(subscribers);
+                    response.setData(datatype);
                     response.setTimestamp(getCurrentTime());
                     return ResponseEntity.ok(response);
                 });
     }
 
     /**
-     * @return Subscriber Entity Response,
+     * @return DataType Entity Response,
      * @apiNote api for creating a new subscriber
      */
     @NonNull
     @PostMapping
-    private Mono<ResponseEntity<CustomApiResponse<CreateSubscriberResponse>>> createSubscriber(@NonNull @RequestBody CreateSubscriberRequest createSubscriberRequest) {
-        log.info("controller: createSubscriber");
-        return subscriberService.createSubscription(createSubscriberRequest)
+    private Mono<ResponseEntity<CustomApiResponse<CreateDataTypeResponse>>> createDataType(@NonNull @RequestBody CreateDataTypeRequest createDataTypeRequest) {
+        log.info("controller: createDataType");
+        return dataTypeService.createDataType(createDataTypeRequest)
                 .map(savedId -> {
-                    CustomApiResponse<CreateSubscriberResponse> response = new CustomApiResponse<>();
+                    CustomApiResponse<CreateDataTypeResponse> response = new CustomApiResponse<>();
                     response.setStatusCode(HttpStatus.OK.value());
                     response.setMessage("Success");
                     response.setData(Collections.singletonList(savedId));
@@ -75,5 +77,4 @@ public class SubscriberController {
                     return ResponseEntity.ok(response);
                 });
     }
-
 }

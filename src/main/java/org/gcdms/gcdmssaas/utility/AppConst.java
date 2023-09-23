@@ -23,4 +23,7 @@ public final class AppConst {
         log.debug("const, getCurrentTime: {}",now.format(formatter));
         return now.format(formatter);
     }
+
+   public static final String[] supportedDataTypes = {"string", "boolean", "float", "double", "int", "integer"};
+
 }

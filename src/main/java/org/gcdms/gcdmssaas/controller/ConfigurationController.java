@@ -4,6 +4,7 @@ package org.gcdms.gcdmssaas.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.gcdms.gcdmssaas.model.CustomApiResponse;
 import org.gcdms.gcdmssaas.payload.request.CreateConfigurationRequest;
+import org.gcdms.gcdmssaas.payload.response.CreateConfigurationResponse;
 import org.gcdms.gcdmssaas.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Mono;
 import java.util.Collections;
 
 import static org.gcdms.gcdmssaas.utility.AppConst.getCurrentTime;
+import static org.gcdms.gcdmssaas.utility.CustomValidations.createConfigurationValidationMethod;
 
 /**
  * Configuration Controller class
@@ -48,16 +50,17 @@ public class ConfigurationController {
     }
 
     /**
-     * @return configuration Id,
+     * @return configuration Entity,
      * @apiNote endpoint for creating new Configuration
      */
     @NonNull
     @PostMapping
-    private Mono<ResponseEntity<CustomApiResponse<Long>>> createConfiguration(@NonNull @RequestBody CreateConfigurationRequest createConfigurationRequest) {
+    private Mono<ResponseEntity<CustomApiResponse<CreateConfigurationResponse>>> createConfiguration(@NonNull @RequestBody CreateConfigurationRequest createConfigurationRequest) {
         log.info("controller: createConfiguration");
+        createConfigurationValidationMethod(createConfigurationRequest);
         return configurationService.createConfiguration(createConfigurationRequest)
                 .map(savedId -> {
-                    CustomApiResponse<Long> response = new CustomApiResponse<>();
+                    CustomApiResponse<CreateConfigurationResponse> response = new CustomApiResponse<>();
                     response.setStatusCode(HttpStatus.OK.value());
                     response.setMessage("Success");
                     response.setData(Collections.singletonList(savedId));
@@ -65,5 +68,7 @@ public class ConfigurationController {
                     return ResponseEntity.ok(response);
                 });
     }
+
+
 
 }

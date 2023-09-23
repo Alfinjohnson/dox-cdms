@@ -1,7 +1,9 @@
 package org.gcdms.gcdmssaas.payload.request;
 
 import lombok.*;
-import org.gcdms.gcdmssaas.model.ConfigurationDataModel;
+import org.gcdms.gcdmssaas.model.CreateConfigurationDataModel;
+
+import java.util.List;
 
 
 @Getter
@@ -11,7 +13,10 @@ import org.gcdms.gcdmssaas.model.ConfigurationDataModel;
 @ToString
 public class CreateConfigurationRequest {
 
-    private String configuration_name;
+    private String name;
 
-    private ConfigurationDataModel<?> data;
+    private String description;
+
+    private List<CreateConfigurationDataModel> subscribers;
+
 }

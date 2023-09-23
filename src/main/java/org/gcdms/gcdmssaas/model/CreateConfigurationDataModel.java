@@ -2,16 +2,18 @@ package org.gcdms.gcdmssaas.model;
 
 import lombok.*;
 
+import java.util.Map;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ConfigurationDataModel<T> {
+public class CreateConfigurationDataModel {
 
-    private String serviceName;
+    private String name;
 
     private String type;
 
-    private T value;
+    private Object value;
 }
