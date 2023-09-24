@@ -1,7 +1,7 @@
 package org.gcdms.gcdmssaas.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.gcdms.gcdmssaas.entity.ConfigurationEntity;
+import org.gcdms.gcdmssaas.entity.SubscriberEntity;
 import org.gcdms.gcdmssaas.entity.data.BooleanDataEntity;
 import org.gcdms.gcdmssaas.expectionHandler.CustomException;
 import org.gcdms.gcdmssaas.model.CreatedConfigurationDataModel;
@@ -12,115 +12,130 @@ import org.gcdms.gcdmssaas.repository.ConfigurationRepository;
 import org.gcdms.gcdmssaas.repository.DataTypeRepository;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Slf4j
 public class ConfigurationService {
 
-    @Autowired
     private final ConfigurationRepository configurationRepository;
-
-    @Autowired
     private final BooleanDataRepository booleanDataRepository;
 
-    @Autowired
-    private final DataTypeRepository typeConfigRepository;
+    private static final Logger logger = LoggerFactory.getLogger(SubscriberService.class);
 
-    @Autowired
-    private ModelMapper modelMapper;
-
-    @Autowired
     private final SubscriberService subscriberService;
+    private static final Logger log = LoggerFactory.getLogger(ConfigurationService.class);
 
-    public ConfigurationService(ConfigurationRepository configurationRepository, BooleanDataRepository booleanDataRepository, DataTypeRepository typeConfigRepository, ModelMapper modelMapper, SubscriberService subscriberService) {
+    @Autowired
+    public ConfigurationService(ConfigurationRepository configurationRepository, BooleanDataRepository booleanDataRepository, DataTypeRepository typeConfigRepository, DataTypeRepository dataTypeRepository, ModelMapper modelMapper, SubscriberService subscriberService) {
         this.configurationRepository = configurationRepository;
         this.booleanDataRepository = booleanDataRepository;
-        this.typeConfigRepository = typeConfigRepository;
-        this.modelMapper = modelMapper;
         this.subscriberService = subscriberService;
     }
 
-    public Mono<CreateConfigurationResponse> createConfiguration(@NotNull CreateConfigurationRequest createConfigurationRequest) {
+    public Mono<CreateConfigurationResponse> createConfiguration(CreateConfigurationRequest createConfigurationRequest) {
         log.info("createConfiguration method called.");
         return createConfigurationMethod(createConfigurationRequest);
     }
 
     @Transactional
-    private @NotNull Mono<CreateConfigurationResponse> createConfigurationMethod(@NotNull CreateConfigurationRequest createConfigurationRequest) {
+    private Mono<CreateConfigurationResponse> createConfigurationMethod(CreateConfigurationRequest createConfigurationRequest) {
         log.info("createConfigurationMethod called.");
 
         List<CreatedConfigurationDataModel> createdConfigurationDataModelList = new ArrayList<>();
 
-        Mono<ConfigurationEntity> configEntity = Mono.defer(() -> {
-            log.info("Creating ConfigurationEntity.");
-            return Mono.just(createConfigurationRequest)
-                    .map(request -> ConfigurationEntity.builder()
-                            .name(createConfigurationRequest.getName())
-                            .description(createConfigurationRequest.getDescription())
+        return saveConfigurationEntityMono(createConfigurationRequest)
+                .flatMap(configEntity -> {
+                    // Use configEntity directly inside the reactive chain
+                    return Flux.fromIterable(createConfigurationRequest.getSubscribers())
+                            .flatMap(subscribers -> {
+                                final String subName = subscribers.getName();
+                                final String subType = subscribers.getType();
+
+                                if (subType.equals("boolean")) {
+                                    final boolean subValue = (boolean) subscribers.getValue();
+                                    return saveToBooleanDataEntity(configEntity, subName, subValue)
+                                            .flatMap(booleanDataEntity -> {
+                                                booleanDataEntityToResponseMapper(booleanDataEntity, createdConfigurationDataModelList);
+                                                return Mono.empty(); // Return an empty Mono here
+                                            });
+                                }
+                                // Handle other subType cases here
+                                return Mono.empty(); // If not a boolean, return an empty Mono
+                            })
+                            .then(Mono.just(configEntity)); // Use configEntity directly
+                })
+                .flatMap(entity -> {
+                    log.info("Mapping configuration entity to response.");
+                    CreateConfigurationResponse response = CreateConfigurationResponse.builder()
+                            .id(entity.getId())
+                            .name(entity.getName())
+                            .subscribers(createdConfigurationDataModelList)
                             .createdUserId(-1L)
                             .lastModifiedUserId(-1L)
-                            .build())
-                    .flatMap(configurationRepository::save)
-                    .doOnNext(entity -> log.info("Saved ConfigurationEntity with ID: {}", entity.getId()))
-                    .onErrorMap(CustomException.class, ex ->
-                            new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save configuration entity", ex));
-        });
-
-// Now you can use configEntityMono wherever you need the ConfigurationEntity
-
-        createConfigurationRequest.getSubscribers().forEach(subscribers -> {
-
-            final String subName = subscribers.getName();
-            final String subType = subscribers.getType();
-
-            if (subType.equals("boolean")) {
-                final boolean subValue = (boolean) subscribers.getValue();
-                Mono<BooleanDataEntity> booleanDataEntityMono = saveToBooleanDataEntity(configEntity, subName, subValue);
-                booleanDataEntityToResponseMapper(booleanDataEntityMono, createdConfigurationDataModelList);
-            }
-            // Handle other subType cases here
-        });
-
-        return configEntity.map(entity -> {
-            log.info("Mapping configuration entity to response.");
-            return CreateConfigurationResponse.builder()
-                    .id(entity.getId())
-                    .name(entity.getName())
-                    .subscribers(createdConfigurationDataModelList)
-                    .createdUserId(-1L)
-                    .lastModifiedUserId(-1L)
-                    .build();
-        }).onErrorMap(CustomException.class, ex -> {
-            log.error("Error occurred during createConfigurationMethod: {}", ex.getMessage(), ex);
-            return new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to complete create the response Create Configuration", ex);
-        });
+                            .build();
+                    return Mono.just(response);
+                })
+                .onErrorMap(CustomException.class, ex -> {
+                    log.error("Error occurred during createConfigurationMethod: {}", ex.getMessage(), ex);
+                    return new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to complete create the response Create Configuration", ex);
+                });
     }
 
-    private void booleanDataEntityToResponseMapper(@NotNull Mono<BooleanDataEntity> booleanDataEntityMono, @NotNull List<CreatedConfigurationDataModel> createdConfigurationDataModelList) {
+
+    // TODO add validation for finding existing config name
+    private Mono<ConfigurationEntity> saveConfigurationEntityMono(CreateConfigurationRequest createConfigurationRequest) {
+        log.info("Creating saveConfigurationEntityMono.");
+
+        return Mono.just(createConfigurationRequest)
+                .map(request -> ConfigurationEntity.builder()
+                        .name(createConfigurationRequest.getName())
+                        .description(createConfigurationRequest.getDescription())
+                        .createdUserId(-1L)
+                        .lastModifiedUserId(-1L)
+                        .build())
+                .flatMap(configurationRepository::save)
+                .doOnError(error -> logger.error("Error in saveConfigurationEntityMono: {}", error.getMessage(), error))
+                .onErrorMap(
+                        CustomException.class,
+                        ex -> new CustomException(HttpStatus.INTERNAL_SERVER_ERROR,
+                                "Failed to complete create saveConfigurationEntityMono request", ex)
+                );
+    }
+
+
+
+
+
+
+
+
+
+    private void booleanDataEntityToResponseMapper(BooleanDataEntity booleanDataEntity, List<CreatedConfigurationDataModel> createdConfigurationDataModelList) {
         log.info("booleanDataEntityToResponseMapper called.");
-        booleanDataEntityMono.map(data -> {
-            log.info("Mapping BooleanDataEntity to response.");
-            return CreatedConfigurationDataModel.builder()
-                    .id(data.getId())
-                    .configurationId(data.getConfigurationId())
-                    .value(data.getValue())
-                    .subscriberId(data.getSubscriberId())
-                    .dataType(data.getDataType())
-                    .build();
-        }).doOnSuccess(createdConfigurationDataModelList::add).subscribe();
+        CreatedConfigurationDataModel createdConfigurationDataModel = CreatedConfigurationDataModel.builder()
+                .id(booleanDataEntity.getId())
+                .configurationId(booleanDataEntity.getConfigurationId())
+                .value(booleanDataEntity.getValue())
+                .subscriberId(booleanDataEntity.getSubscriberId())
+                .dataType(booleanDataEntity.getDataType())
+                .build();
+        createdConfigurationDataModelList.add(createdConfigurationDataModel);
     }
 
-    public @NotNull Mono<BooleanDataEntity> saveToBooleanDataEntity(Mono<ConfigurationEntity> configEntity, String subName, boolean subValue) {
+    private Mono<BooleanDataEntity> saveToBooleanDataEntity(ConfigurationEntity configEntity, String subName, boolean subValue) {
         log.info("saveToBooleanDataEntity called.");
-        return Mono.zip(configEntity, subscriberService.findIdByName(subName))
+        return Mono.zip(Mono.just(configEntity), subscriberService.findIdByName(subName))
                 .map(tuple -> {
                     log.info("Mapping parameters to BooleanDataEntity.");
                     BooleanDataEntity booleanDataEntity = new BooleanDataEntity();
@@ -138,4 +153,6 @@ public class ConfigurationService {
                     return new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save Boolean Data Entity", ex);
                 });
     }
+
+
 }
