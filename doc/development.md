@@ -1,1 +1,3 @@
-Not strongly caching class [org.gcdms.gcdmssaas.entity.SubscriberEntity] because it is not cache-safe
+# Setup SSL 
+
+keytool -genkeypair -alias cdms -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore keystore.p12 -validity 3650
