@@ -73,13 +73,60 @@ public class ConfigurationService {
                     return new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create configuration", ex);
                 });
     }
+    @Transactional
+    public Mono<CreateConfigurationResponse> createOrUpdateConfiguration(CreateConfigurationRequest request) {
+        String configurationName = request.getName();
+        log.info("createOrUpdateConfiguration");
+        return configurationRepository.findByName(configurationName)
+                .flatMap(existingConfiguration -> {
+                    // Configuration with the same name already exists, perform an update
+                    log.info("Updating configuration with name '{}' and ID '{}'", configurationName, existingConfiguration.getId());
 
+                    List<CreatedConfigurationDataModel> createdConfigurationDataModels = new ArrayList<>();
+
+                    return Flux.fromIterable(request.getSubscribers())
+                            .flatMap(subscriberRequest -> {
+                                final String subscriberName = subscriberRequest.getName();
+                                final String subscriberType = subscriberRequest.getType();
+
+                                if ("boolean".equals(subscriberType)) {
+                                    final boolean subscriberValue = (boolean) subscriberRequest.getValue();
+                                    return saveBooleanDataEntity(existingConfiguration, subscriberName, subscriberValue)
+                                            .doOnNext(savedBooleanDataEntity -> mapToResponse(savedBooleanDataEntity, createdConfigurationDataModels));
+                                }
+                                // Handle other subscriber types here
+                                return Mono.empty();
+                            })
+                            .then(Mono.just(createResponse(existingConfiguration, createdConfigurationDataModels)));
+                })
+                .switchIfEmpty(saveConfigurationEntityMono2(request))
+                .doOnSuccess(response -> log.info("Configuration successfully created/updated: {}", response.getName()))
+                .doOnError(ex -> log.error("Error occurred during createOrUpdateConfiguration: {}", ex.getMessage(), ex))
+                .onErrorMap(CustomException.class, ex -> {
+                    log.warn("Failed to create/update configuration: {}", ex.getMessage(), ex);
+                    return new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create/update configuration", ex);
+                });
+    }
     private @NotNull Mono<Void> validateEntityDoesNotExist(String name) {
         return configurationRepository.findByName(name)
                 .flatMap(entity -> Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Configuration already exists with name: " + name)))
                 .doOnSuccess(entity -> log.debug("Configuration with name {} already exists", name))
                 .doOnError(ex -> log.debug("Configuration with name {} does not exist", name))
                 .then();
+    }
+    private Mono<CreateConfigurationResponse> saveConfigurationEntityMono2(CreateConfigurationRequest request) {
+        log.info("Creating a new configuration...");
+        ConfigurationEntity configurationEntity = new ConfigurationEntity();
+        configurationEntity.setName(request.getName());
+        configurationEntity.setDescription(request.getDescription());
+        configurationEntity.setCreatedUserId(-1L);
+        configurationEntity.setLastModifiedUserId(-1L);
+        return configurationRepository.save(configurationEntity)
+                .flatMap(savedEntity -> {
+                    List<CreatedConfigurationDataModel> createdConfigurationDataModels = new ArrayList<>();
+                    return Mono.just(createResponse(savedEntity, createdConfigurationDataModels));
+                })
+                .doOnSuccess(entity -> log.debug("Configuration entity saved with ID: {}", entity.getId()));
     }
 
     private @NotNull Mono<ConfigurationEntity> saveConfigurationEntityMono(@NotNull CreateConfigurationRequest createConfigurationRequest) {

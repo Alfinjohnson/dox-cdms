@@ -17,6 +17,8 @@ public class CreateConfigurationRequest {
 
     private String description;
 
+    private boolean createConfigIfNotFoundEnabled;
+
     private List<CreateConfigurationDataModel> subscribers;
 
 }

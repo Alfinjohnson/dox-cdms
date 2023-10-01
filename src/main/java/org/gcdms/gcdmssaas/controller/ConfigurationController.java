@@ -58,7 +58,18 @@ public class ConfigurationController {
     private Mono<ResponseEntity<CustomApiResponse<CreateConfigurationResponse>>> createConfiguration(@NonNull @RequestBody CreateConfigurationRequest createConfigurationRequest) {
         log.info("controller: createConfiguration");
         createConfigurationValidationMethod(createConfigurationRequest);
-        return configurationService.createConfiguration(createConfigurationRequest)
+        if (createConfigurationRequest.isCreateConfigIfNotFoundEnabled())
+            return configurationService.createOrUpdateConfiguration(createConfigurationRequest)
+                .map(savedId -> {
+                    CustomApiResponse<CreateConfigurationResponse> response = new CustomApiResponse<>();
+                    response.setStatusCode(HttpStatus.OK.value());
+                    response.setMessage("Success");
+                    response.setData(Collections.singletonList(savedId));
+                    response.setTimestamp(getCurrentTime());
+                    return ResponseEntity.ok(response);
+                });
+        else
+            return configurationService.createConfiguration(createConfigurationRequest)
                 .map(savedId -> {
                     CustomApiResponse<CreateConfigurationResponse> response = new CustomApiResponse<>();
                     response.setStatusCode(HttpStatus.OK.value());
