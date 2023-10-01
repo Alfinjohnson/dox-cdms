@@ -1,3 +1,3 @@
-# CDMS
+# Configuration Delivery Management System - CDMS
 
-configuration delivery management system
+
