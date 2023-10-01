@@ -1,4 +1,4 @@
-package org.gcdms.gcdmssaas.entity.data;
+package org.gcdms.gcdmssaas.entity.dataType;
 
 import lombok.*;
 import org.gcdms.gcdmssaas.entity.ConfigurationEntity;

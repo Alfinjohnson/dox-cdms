@@ -13,5 +13,5 @@ import java.util.Optional;
 @Repository
 public interface ConfigurationRepository extends ReactiveCrudRepository<ConfigurationEntity, Long> {
 
-    Mono<Object> findByName(String name);
+    Mono<ConfigurationEntity> findByName(String name);
 }

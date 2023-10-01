@@ -1,6 +1,6 @@
 package org.gcdms.gcdmssaas.repository;
 
-import org.gcdms.gcdmssaas.entity.data.BooleanDataEntity;
+import org.gcdms.gcdmssaas.entity.dataType.BooleanDataEntity;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 
