@@ -1,3 +1,3 @@
-# gcdms-saas
+# CDMS
 
 configuration delivery management system
