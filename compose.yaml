@@ -4,4 +4,4 @@ server:
     key-store: classpath:keystore.p12
     key-store-password: your-keystore-password
     key-store-type: PKCS12
-    key-alias: myapp
+    key-alias: cdms
