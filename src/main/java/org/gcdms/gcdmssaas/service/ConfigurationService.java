@@ -33,7 +33,7 @@ public class ConfigurationService {
     private final CSDMappingService csdMappingService;
     private static final Logger log = LoggerFactory.getLogger(ConfigurationService.class);
 
-    public ConfigurationService(ConfigurationRepository configurationRepository, BooleanDataRepository booleanDataRepository, SubscriberRepository subscriberRepository, SubscriberService subscriberService, CSDMappingService csdMappingService) {
+    public ConfigurationService(ConfigurationRepository configurationRepository, SubscriberService subscriberService, CSDMappingService csdMappingService) {
         this.configurationRepository = configurationRepository;
         this.csdMappingService = csdMappingService;
         this.subscriberService = subscriberService;
@@ -55,7 +55,7 @@ public class ConfigurationService {
                     return Flux.fromIterable(createConfigurationRequest.getSubscribers())
                             .flatMap(subscriberRequest -> saveSubscriberAndMapping(savedConfigurationEntity, subscriberRequest, createdConfigurationDataModels))
                             .then(Mono.just(createdConfigurationDataModels)) // Wrap the list in a Mono
-                            .map(savedSubscriberEntities -> createResponse(savedConfigurationEntity, savedSubscriberEntities));
+                            .map(savedSubscriberEntities -> createResponse(savedConfigurationEntity, createdConfigurationDataModels));
                 })
                 .doOnSuccess(response -> log.info("Configuration successfully created: {}", response.getName()))
                 .doOnError(ex -> log.error("Error occurred during createConfiguration: {}", ex.getMessage(), ex))
@@ -65,12 +65,11 @@ public class ConfigurationService {
                 });
     }
 
-    private Mono<List<CreatedConfigurationDataModel>> saveSubscriberAndMapping(ConfigurationEntity savedConfigurationEntity, CreateConfigurationDataModel subscriberRequest, List<CreatedConfigurationDataModel> createdConfigurationDataModels) {
+    private Mono<CreatedConfigurationDataModel> saveSubscriberAndMapping(ConfigurationEntity savedConfigurationEntity, CreateConfigurationDataModel subscriberRequest, List<CreatedConfigurationDataModel> createdConfigurationDataModels) {
         return saveSubscriberEntity(subscriberRequest)
                 .flatMap(savedSubscriberEntity -> saveCSDMappingEntity(savedSubscriberEntity.getId(), savedConfigurationEntity.getId())
-                        .thenReturn(createdConfigurationDataModels)); // Wrap the list in a Mono
+                        .thenReturn(subscriberMapper(savedSubscriberEntity, createdConfigurationDataModels)));
     }
-
 
 
     private @NotNull Mono<SubscriberEntity> saveSubscriberEntity(@NotNull CreateConfigurationDataModel subscriberRequest) {
@@ -85,9 +84,9 @@ public class ConfigurationService {
                 .name(configurationEntity.getName())
                 .description(configurationEntity.getDescription())
                 .subscribers(createdConfigurationDataModels)
+                .createdDateTime(configurationEntity.getCreatedDateTime())
                 .build();
     }
-
 
 
     private Mono<CSDMappingEntity> saveCSDMappingEntity(Long newSubscriberId, Long newConfigurationId) {
@@ -120,11 +119,14 @@ public class ConfigurationService {
         return Mono.empty();
     }
 
-    private CreatedConfigurationDataModel mapToResponse(@NotNull SubscriberEntity subscriberEntity) {
+    private CreatedConfigurationDataModel subscriberMapper(@NotNull SubscriberEntity subscriberEntity, List<CreatedConfigurationDataModel> createdConfigurationDataModels) {
         CreatedConfigurationDataModel createdConfigurationDataModel = new CreatedConfigurationDataModel();
         createdConfigurationDataModel.setId(subscriberEntity.getId());
+        createdConfigurationDataModel.setName(subscriberEntity.getName());
+        createdConfigurationDataModel.setDescription(subscriberEntity.getDescription());
         createdConfigurationDataModel.setValue(subscriberEntity.getBoolean_dt());
         createdConfigurationDataModel.setDataType(subscriberEntity.getDataType());
+        createdConfigurationDataModels.add(createdConfigurationDataModel); // Add to the list
         return createdConfigurationDataModel;
     }
 
