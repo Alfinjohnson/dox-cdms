@@ -4,12 +4,9 @@ package org.gcdms.gcdmssaas.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.gcdms.gcdmssaas.model.CustomApiResponse;
 import org.gcdms.gcdmssaas.payload.request.CreateDataTypeRequest;
-import org.gcdms.gcdmssaas.payload.request.CreateSubscriberRequest;
 import org.gcdms.gcdmssaas.payload.response.CreateDataTypeResponse;
-import org.gcdms.gcdmssaas.payload.response.CreateSubscriberResponse;
 import org.gcdms.gcdmssaas.payload.response.FetchAllDataTypeResponse;
-import org.gcdms.gcdmssaas.payload.response.FetchAllSubscriberResponse;
-import org.gcdms.gcdmssaas.service.DataTypeService;
+import org.gcdms.gcdmssaas.service.CSDMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,9 +30,9 @@ public class DataTypeController {
      * datatype Service autowired
      */
     @Autowired
-    private final DataTypeService dataTypeService;
+    private final CSDMappingService dataTypeService;
 
-    public DataTypeController(DataTypeService dataTypeService) {
+    public DataTypeController(CSDMappingService dataTypeService) {
         this.dataTypeService = dataTypeService;
     }
 
@@ -67,7 +64,7 @@ public class DataTypeController {
     @PostMapping
     private Mono<ResponseEntity<CustomApiResponse<CreateDataTypeResponse>>> createDataType(@NonNull @RequestBody CreateDataTypeRequest createDataTypeRequest) {
         log.info("controller: createDataType");
-        return dataTypeService.createDataType(createDataTypeRequest)
+        return dataTypeService.createCSDMapping(createDataTypeRequest)
                 .map(savedId -> {
                     CustomApiResponse<CreateDataTypeResponse> response = new CustomApiResponse<>();
                     response.setStatusCode(HttpStatus.OK.value());

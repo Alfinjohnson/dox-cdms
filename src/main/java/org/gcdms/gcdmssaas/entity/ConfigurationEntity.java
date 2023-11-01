@@ -37,10 +37,4 @@ public final class ConfigurationEntity {
     @Column("created_datetime")
     private LocalDateTime createdDateTime;
 
-    @Column("created_userid")
-    private Long createdUserId;
-
-
-    @Column("last_modified_userid")
-    private Long lastModifiedUserId;
 }

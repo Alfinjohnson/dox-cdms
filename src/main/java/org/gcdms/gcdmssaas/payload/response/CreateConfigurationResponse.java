@@ -32,7 +32,4 @@ public class CreateConfigurationResponse {
 
     private LocalDateTime createdDateTime;
 
-    private Long createdUserId;
-
-    private Long lastModifiedUserId;
 }

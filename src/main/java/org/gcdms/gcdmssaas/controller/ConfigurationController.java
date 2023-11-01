@@ -58,18 +58,7 @@ public class ConfigurationController {
     private Mono<ResponseEntity<CustomApiResponse<CreateConfigurationResponse>>> createConfiguration(@NonNull @RequestBody CreateConfigurationRequest createConfigurationRequest) {
         log.info("controller: createConfiguration");
         createConfigurationValidationMethod(createConfigurationRequest);
-        if (createConfigurationRequest.isCreateConfigIfNotFoundEnabled())
-            return configurationService.createOrUpdateConfiguration(createConfigurationRequest)
-                .map(savedId -> {
-                    CustomApiResponse<CreateConfigurationResponse> response = new CustomApiResponse<>();
-                    response.setStatusCode(HttpStatus.OK.value());
-                    response.setMessage("Success");
-                    response.setData(Collections.singletonList(savedId));
-                    response.setTimestamp(getCurrentTime());
-                    return ResponseEntity.ok(response);
-                });
-        else
-            return configurationService.createConfiguration(createConfigurationRequest)
+        return configurationService.createConfiguration(createConfigurationRequest)
                 .map(savedId -> {
                     CustomApiResponse<CreateConfigurationResponse> response = new CustomApiResponse<>();
                     response.setStatusCode(HttpStatus.OK.value());
@@ -80,6 +69,25 @@ public class ConfigurationController {
                 });
     }
 
+    /**
+     * @return configuration Entity,
+     * @apiNote endpoint for updating Configuration
+     */
+//    @NonNull
+//    @PutMapping
+//    private Mono<ResponseEntity<CustomApiResponse<CreateConfigurationResponse>>> updateConfiguration(@NonNull @RequestBody CreateConfigurationRequest createConfigurationRequest) {
+//        log.info("controller: updateConfiguration");
+//        createConfigurationValidationMethod(createConfigurationRequest);
+//        return configurationService.createOrUpdateConfiguration(createConfigurationRequest)
+//                    .map(savedId -> {
+//                        CustomApiResponse<CreateConfigurationResponse> response = new CustomApiResponse<>();
+//                        response.setStatusCode(HttpStatus.OK.value());
+//                        response.setMessage("Success");
+//                        response.setData(Collections.singletonList(savedId));
+//                        response.setTimestamp(getCurrentTime());
+//                        return ResponseEntity.ok(response);
+//                    });
+//    }
 
 
 }

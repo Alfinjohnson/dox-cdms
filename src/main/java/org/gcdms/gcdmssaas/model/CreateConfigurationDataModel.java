@@ -13,6 +13,8 @@ public class CreateConfigurationDataModel {
 
     private String name;
 
+    private String description;
+
     private String type;
 
     private Object value;

@@ -1,13 +1,13 @@
 package org.gcdms.gcdmssaas.repository;
 
-import org.gcdms.gcdmssaas.entity.DataTypeEntity;
+import org.gcdms.gcdmssaas.entity.CSDMappingEntity;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * DataType repository
+ * CSDMapping repository
  */
 @Repository
-public interface DataTypeRepository extends ReactiveCrudRepository<DataTypeEntity, Long> {
+public interface CSDMappingRepository extends ReactiveCrudRepository<CSDMappingEntity, Long> {
 
 }

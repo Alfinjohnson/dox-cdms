@@ -11,13 +11,12 @@ public class CustomException extends RuntimeException {
     private final HttpStatus status;
     private final String message;
 
-    @Getter
-    private final Throwable ex;
 
-    public CustomException(HttpStatus status, String message, Throwable ex) {
+
+    public CustomException(HttpStatus status, String message) {
         this.status = status;
         this.message = message;
-        this.ex = ex;
+
     }
 
     @Override

@@ -63,14 +63,12 @@ public class SubscriberService {
                 .map(request -> SubscriberEntity.builder()
                         .name(createSubscriberRequest.getName())
                         .description(createSubscriberRequest.getDescription())
-                        .createdUserId(-1L)
-                        .lastModifiedUserId(-1L)
                         .build())
                 .flatMap(subscriberRepository::save) // Save the SubscriberEntity
                 .map(this::createSubscriptionToResponse)
                 .onErrorMap(CustomException.class, ex ->
                         new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "createSubscriptionMethod: " +
-                                "Failed to complete create Subscription request", ex));
+                                "Failed to complete create Subscription request"));
     }
 
     private CreateSubscriberResponse createSubscriptionToResponse(SubscriberEntity subscriberEntity) {
@@ -89,7 +87,7 @@ public class SubscriberService {
                 .map(this::mapSubscriberToResponse)
                 .onErrorMap(
                         CustomException.class,
-                        ex -> new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch all subscribers.", ex)
+                        ex -> new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch all subscribers.")
                 );
     }
 
@@ -104,32 +102,43 @@ public class SubscriberService {
         return modelMapper.map(subscriberEntity, FetchAllSubscriberResponse.class);
     }
 
-    public Mono<Long> findIdByName(String name) {
-        logger.info("findIdByName name: {}",name);
-        return subscriberRepository.findByName(name)
-                .map(SubscriberEntity::getId)
-                .switchIfEmpty(Mono.defer(() -> (Mono<Long>) createNewSubscriber(name)))
-                .doOnError(error -> logger.error("Error in findIdByName: {}", error.getMessage(), error));
-    }
+//    public Mono<Long> findIdByName(String name) {
+//        logger.info("findIdByName name: {}",name);
+//        return subscriberRepository.findByName(name)
+//                .map(SubscriberEntity::getId)
+//                .switchIfEmpty(Mono.defer(() -> (Mono<Long>) createNewSubscriber(name)))
+//                .doOnError(error -> logger.error("Error in findIdByName: {}", error.getMessage(), error));
+//    }
 
 
-    private @NotNull Mono<Long> createNewSubscriber(String name) {
-        logger.info("createNewSubscriber name: {}",name);
-        return Mono.just(name)
-                .map(request -> SubscriberEntity.builder()
-                        .name(name)
-                        .description(name)
-                        .createdUserId(-1L)
-                        .lastModifiedUserId(-1L)
-                        .build())
-                .flatMap(subscriberRepository::save)
-                .map(SubscriberEntity::getId)
-                .doOnError(error -> logger.error("Error in createNewSubscriber: {}", error.getMessage(), error))
+    public Mono<SubscriberEntity> createNewSubscriber(String subscriberName, String subscriberDescription, String subscriberType, Boolean subscriberValue) {
+        logger.info("Creating a new subscriber: name={}", subscriberName);
+
+        if (subscriberName == null || subscriberName.isEmpty()) {
+            return Mono.error(new CustomException(HttpStatus.BAD_REQUEST, "Subscriber name cannot be null or empty"));
+        }
+
+        SubscriberEntity newSubscriber = SubscriberEntity.builder()
+                .name(subscriberName)
+                .description(subscriberDescription)
+                .dataType(subscriberType)
+                .boolean_dt(subscriberValue)
+                .enabled(true)
+                .double_dt(null)
+                .json_dt(null)
+                .float_dt(null)
+                .string_dt(null)
+                .integer_dt(null)
+                .build();
+
+        return subscriberRepository.save(newSubscriber)
+                .doOnError(error -> logger.error("Error in creating new subscriber (name={}): {}", subscriberName, error.getMessage(), error))
                 .onErrorMap(
                         CustomException.class,
-                        ex -> new CustomException(HttpStatus.INTERNAL_SERVER_ERROR,
-                                "Failed to complete create Subscription request", ex)
+                        ex -> new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to complete create Subscription request")
                 );
     }
+
+
 
 }

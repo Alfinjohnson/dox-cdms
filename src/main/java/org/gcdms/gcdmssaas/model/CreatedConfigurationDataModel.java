@@ -1,6 +1,7 @@
 package org.gcdms.gcdmssaas.model;
 
 import lombok.*;
+import org.springframework.data.relational.core.mapping.Column;
 
 @Builder
 @AllArgsConstructor
@@ -12,11 +13,13 @@ public class CreatedConfigurationDataModel {
 
     private Long id;
 
-    private Long configurationId;
+    private String name;
 
-    private Long subscriberId;
+    private String description;
 
     private String dataType;
+
+    private boolean enabled;
 
     private Object value;
 }

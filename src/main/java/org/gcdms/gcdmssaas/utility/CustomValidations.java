@@ -25,11 +25,11 @@ public final class CustomValidations {
         Throwable ex = null;
         if (!isValidAlphabeticWithNumberAndHyphen(createConfigurationRequest.getName()))
             throw new CustomException(HttpStatus.BAD_REQUEST,
-                    "Invalid character found in input: '" + createConfigurationRequest.getName() + "'. Input can only contain alphabetic characters, numbers, and hyphens.", ex);
+                    "Invalid character found in input: '" + createConfigurationRequest.getName() + "'. Input can only contain alphabetic characters, numbers, and hyphens.");
 
         if (!isValidDescription(createConfigurationRequest.getDescription()))
             throw new CustomException(HttpStatus.BAD_REQUEST,
-                    "Invalid character found in input: '" + createConfigurationRequest.getName() + "'. Check if the description contains only alphanumeric characters, spaces, and common punctuation marks.", ex);
+                    "Invalid character found in input: '" + createConfigurationRequest.getName() + "'. Check if the description contains only alphanumeric characters, spaces, and common punctuation marks.");
 
         List<CreateConfigurationDataModel> subscribersList = createConfigurationRequest.getSubscribers();
         for (CreateConfigurationDataModel subscriber : subscribersList) {
@@ -42,26 +42,26 @@ public final class CustomValidations {
             log.info("Subscriber value: {}", value);
             if (!isValidAlphabeticWithNumberAndUnderScore(name))
                 throw new CustomException(HttpStatus.BAD_REQUEST,
-                        "Invalid character found in input subscriber name: '" + name + "'. Input can only contain alphabetic characters, numbers, and underscore.", ex);
+                        "Invalid character found in input subscriber name: '" + name + "'. Input can only contain alphabetic characters, numbers, and underscore.");
             if (!isValidDataType(type))
                 throw new CustomException(HttpStatus.BAD_REQUEST,
-                        "Invalid character found in input subscriber type: '" + type + "'. types can only contain "+ Arrays.toString(supportedDataTypes), ex);
+                        "Invalid character found in input subscriber type: '" + type + "'. types can only contain "+ Arrays.toString(supportedDataTypes));
 
             if (type.equals("boolean")){
                 if (!value.equals(true) && !value.equals(false)) {
                     throw new CustomException(HttpStatus.BAD_REQUEST,
-                            "Invalid character found in input subscriber boolean value: " + value, ex);
+                            "Invalid character found in input subscriber boolean value: " + value);
                 }
             }
             if (type.equals("int") || type.equals("integer")){
                 if (!isValidInteger(value.toString()))
                     throw new CustomException(HttpStatus.BAD_REQUEST,
-                             "Invalid character found in input subscriber value: " + value, ex);
+                             "Invalid character found in input subscriber value: " + value);
             }
             if (type.equals("string")){
                 if (!isValidAlphabeticWithNumberAndUnderScore(value.toString()))
                     throw new CustomException(HttpStatus.BAD_REQUEST,
-                            "Invalid character found in input subscriber value: " + value, ex);
+                            "Invalid character found in input subscriber value: " + value);
             }
 
         }
