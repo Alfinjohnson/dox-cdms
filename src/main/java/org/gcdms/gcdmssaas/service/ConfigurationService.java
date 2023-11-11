@@ -7,9 +7,11 @@ import org.gcdms.gcdmssaas.expectionHandler.CustomException;
 import org.gcdms.gcdmssaas.model.CreateConfigurationDataModel;
 import org.gcdms.gcdmssaas.model.CreatedConfigurationDataModel;
 import org.gcdms.gcdmssaas.payload.request.CreateConfigurationRequest;
+import org.gcdms.gcdmssaas.payload.request.UpdateConfigurationRequest;
 import org.gcdms.gcdmssaas.payload.response.CreateConfigurationResponse;
 import org.gcdms.gcdmssaas.repository.ConfigurationRepository;
 import org.jetbrains.annotations.NotNull;
+import org.modelmapper.ModelMapper;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -145,39 +147,29 @@ public class ConfigurationService {
 
 
 
-//    @Transactional
-//    public Mono<CreateConfigurationResponse> createOrUpdateConfiguration(@NotNull CreateConfigurationRequest request) {
-//        String configurationName = request.getName();
-//        log.info("createOrUpdateConfiguration");
-//        return configurationRepository.findByName(configurationName)
-//                .flatMap(existingConfiguration -> {
-//                    // Configuration with the same name already exists, perform an update
-//                    log.info("Updating configuration with name '{}' and ID '{}'", configurationName, existingConfiguration.getId());
-//
-//                    List<CreatedConfigurationDataModel> createdConfigurationDataModels = new ArrayList<>();
-//
-//                    return Flux.fromIterable(request.getSubscribers())
-//                            .flatMap(subscriberRequest -> {
-//                                final String subscriberName = subscriberRequest.getName();
-//                                final String subscriberType = subscriberRequest.getType();
-//
-//                                if ("boolean".equals(subscriberType)) {
-//                                    final boolean subscriberValue = (boolean) subscriberRequest.getValue();
-//                                    return saveSubscriberEntity(existingConfiguration, subscriberName, subscriberValue)
-//                                            .doOnNext(savedSubscriberEntity -> mapToResponse(savedSubscriberEntity, createdConfigurationDataModels));
-//                                }
-//                                // Handle other subscriber types here
-//                                return Mono.empty();
-//                            })
-//                            .then(Mono.just(createResponse(existingConfiguration, createdConfigurationDataModels)));
-//                })
-//                .switchIfEmpty(saveConfigurationEntityMono2(request))
-//                .doOnSuccess(response -> log.info("Configuration successfully created/updated: {}", response.getName()))
-//                .doOnError(ex -> log.error("Error occurred during createOrUpdateConfiguration: {}", ex.getMessage(), ex))
-//                .onErrorMap(CustomException.class, ex -> {
-//                    log.warn("Failed to create/update configuration: {}", ex.getMessage(), ex);
-//                    return new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create/update configuration", ex);
-//                });
-//    }
+    @Transactional
+    public Mono<CreateConfigurationResponse> updateConfiguration(@NotNull UpdateConfigurationRequest updateConfigurationRequest) {
+        // Create a ModelMapper instance
+        ModelMapper modelMapper = new ModelMapper();
+        // Perform the mapping
+        CreateConfigurationRequest createRequest = modelMapper.map(updateConfigurationRequest, CreateConfigurationRequest.class);
+        log.info("updateConfiguration");
+        return validateEntityDoesNotExist(updateConfigurationRequest.getName())
+                .then(saveConfigurationEntity(createRequest))
+                .flatMap(savedConfigurationEntity -> {
+                    List<CreatedConfigurationDataModel> createdConfigurationDataModels = new ArrayList<>();
+                    return Flux.fromIterable(createRequest.getSubscribers())
+                            .flatMap(subscriberRequest -> saveSubscriberAndMapping(savedConfigurationEntity, subscriberRequest, createdConfigurationDataModels))
+                            .then(Mono.just(createdConfigurationDataModels)) // Wrap the list in a Mono
+                            .map(savedSubscriberEntities -> createResponse(savedConfigurationEntity, createdConfigurationDataModels));
+                })
+                .doOnSuccess(response -> log.info("Configuration successfully created: {}", response.getName()))
+                .doOnError(ex -> log.error("Error occurred during createConfiguration: {}", ex.getMessage(), ex))
+                .onErrorMap(CustomException.class, ex -> {
+                    log.warn("Failed to create configuration: {}", ex.getMessage(), ex);
+                    return new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create configuration");
+                });
+    }
+
 
 }

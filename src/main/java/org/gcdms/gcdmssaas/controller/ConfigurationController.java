@@ -4,6 +4,7 @@ package org.gcdms.gcdmssaas.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.gcdms.gcdmssaas.model.CustomApiResponse;
 import org.gcdms.gcdmssaas.payload.request.CreateConfigurationRequest;
+import org.gcdms.gcdmssaas.payload.request.UpdateConfigurationRequest;
 import org.gcdms.gcdmssaas.payload.response.CreateConfigurationResponse;
 import org.gcdms.gcdmssaas.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import java.util.Collections;
 
 import static org.gcdms.gcdmssaas.utility.AppConst.getCurrentTime;
 import static org.gcdms.gcdmssaas.utility.CustomValidations.createConfigurationValidationMethod;
+import static org.gcdms.gcdmssaas.utility.CustomValidations.updateConfigurationValidationMethod;
 
 /**
  * Configuration Controller class
@@ -73,21 +75,22 @@ public class ConfigurationController {
      * @return configuration Entity,
      * @apiNote endpoint for updating Configuration
      */
-//    @NonNull
-//    @PutMapping
-//    private Mono<ResponseEntity<CustomApiResponse<CreateConfigurationResponse>>> updateConfiguration(@NonNull @RequestBody CreateConfigurationRequest createConfigurationRequest) {
-//        log.info("controller: updateConfiguration");
-//        createConfigurationValidationMethod(createConfigurationRequest);
-//        return configurationService.createOrUpdateConfiguration(createConfigurationRequest)
-//                    .map(savedId -> {
-//                        CustomApiResponse<CreateConfigurationResponse> response = new CustomApiResponse<>();
-//                        response.setStatusCode(HttpStatus.OK.value());
-//                        response.setMessage("Success");
-//                        response.setData(Collections.singletonList(savedId));
-//                        response.setTimestamp(getCurrentTime());
-//                        return ResponseEntity.ok(response);
-//                    });
-//    }
+    @NonNull
+    @PutMapping
+    private Mono<ResponseEntity<CustomApiResponse<CreateConfigurationResponse>>> updateConfiguration(@NonNull @RequestBody UpdateConfigurationRequest updateConfigurationRequest) {
+        log.info("controller: updateConfiguration");
+        updateConfigurationValidationMethod(updateConfigurationRequest);
+        return configurationService.updateConfiguration(updateConfigurationRequest)
+                    .map(savedId -> {
+                        CustomApiResponse<CreateConfigurationResponse> response = new CustomApiResponse<>();
+                        response.setStatusCode(HttpStatus.OK.value());
+                        response.setMessage("Success");
+                        response.setData(Collections.singletonList(savedId));
+                        response.setTimestamp(getCurrentTime());
+                        return ResponseEntity.ok(response);
+                    });
+    }
+
 
 
 }
