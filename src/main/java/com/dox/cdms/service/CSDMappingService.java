@@ -2,8 +2,6 @@ package com.dox.cdms.service;
 
 
 import com.dox.cdms.entity.CSDMappingEntity;
-import com.dox.cdms.payload.response.CreateDataTypeResponse;
-import com.dox.cdms.payload.response.FetchAllDataTypeResponse;
 import com.dox.cdms.repository.CSDMappingRepository;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
