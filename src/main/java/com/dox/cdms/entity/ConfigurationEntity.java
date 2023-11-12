@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Entity
-public final class ConfigurationEntity {
+public class ConfigurationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @jakarta.persistence.Column(name = "id", nullable = false)

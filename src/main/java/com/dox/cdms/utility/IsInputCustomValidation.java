@@ -1,7 +1,6 @@
 package com.dox.cdms.utility;
 
 import lombok.extern.slf4j.Slf4j;
-
 import static com.dox.cdms.utility.AppConst.supportedDataTypes;
 
 

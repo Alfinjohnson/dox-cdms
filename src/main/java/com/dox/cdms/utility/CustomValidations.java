@@ -1,18 +1,15 @@
 package com.dox.cdms.utility;
 
+import com.dox.cdms.expectionHandler.CustomException;
 import com.dox.cdms.model.CreateConfigurationDataModel;
 import com.dox.cdms.model.UpdateConfigurationDataModel;
 import com.dox.cdms.payload.request.CreateConfigurationRequest;
 import com.dox.cdms.payload.request.UpdateConfigurationRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.gcdms.gcdmssaas.expectionHandler.CustomException;
-
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
-
 import java.util.Arrays;
 import java.util.List;
-
 import static com.dox.cdms.utility.AppConst.supportedDataTypes;
 import static com.dox.cdms.utility.IsInputCustomValidation.*;
 

@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Entity
-public final class SubscriberEntity {
+public class SubscriberEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @jakarta.persistence.Column(name = "id", nullable = false)

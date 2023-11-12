@@ -16,8 +16,8 @@ import static com.dox.cdms.utility.AppConst.getCurrentTime;
 @Order(-2) // Set an order if needed to control exception handler precedence
 public class CustomExceptionHandler {
 
-    @ExceptionHandler(org.gcdms.gcdmssaas.expectionHandler.CustomException.class)
-    public ResponseEntity<ErrorResponse> handleCustomException(ServerWebExchange exchange, @NotNull org.gcdms.gcdmssaas.expectionHandler.CustomException ex) {
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ErrorResponse> handleCustomException(ServerWebExchange exchange, @NotNull CustomException ex) {
         ErrorResponse errorResponse = new ErrorResponse(
                 ex.getStatus().value(),
                 ex.getMessage(),
