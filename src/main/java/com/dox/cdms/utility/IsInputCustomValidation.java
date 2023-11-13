@@ -73,12 +73,6 @@ public final class IsInputCustomValidation {
 
     public static boolean isValidDescription(String description) {
         log.info("isValidDescription: {}",description);
-        // Check if the description is not null and has a minimum length (e.g., 8 characters)
-        if (description == null || description.length() < 10) {
-            log.info("isValidDescription: {} Check if the description is not null and has a minimum length (e.g., 8 characters)",description);
-            return true;
-        }
-        // Check if the description contains only alphanumeric characters, spaces, and common punctuation marks
         String regex = "^[a-zA-Z0-9\\s.,!?\\-()\"']+";
         return !description.matches(regex);
     }

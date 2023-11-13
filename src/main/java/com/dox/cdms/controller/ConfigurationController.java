@@ -3,6 +3,7 @@ package com.dox.cdms.controller;
 
 import com.dox.cdms.model.CustomApiResponse;
 import com.dox.cdms.payload.request.CreateConfigurationRequest;
+import com.dox.cdms.payload.request.UpdateConfigurationRequest;
 import com.dox.cdms.payload.response.CreateConfigurationResponse;
 import com.dox.cdms.service.ConfigurationService;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import static com.dox.cdms.utility.AppConst.getCurrentTime;
 import static com.dox.cdms.utility.CustomValidations.createConfigurationValidationMethod;
+import static com.dox.cdms.utility.CustomValidations.updateConfigurationValidationMethod;
 
 /**
  * Configuration Controller class
@@ -69,19 +72,20 @@ public class ConfigurationController {
     /**
      * @return configuration Entity,
      * @apiNote endpoint for updating Configuration
-
+     */
     @NonNull
     @PutMapping
-    private ResponseEntity<CustomApiResponse<CreateConfigurationResponse>> updateConfiguration(@NonNull @RequestBody UpdateConfigurationRequest updateConfigurationRequest) {
+    private ResponseEntity<CustomApiResponse<String>> updateConfiguration(@NonNull @RequestBody UpdateConfigurationRequest updateConfigurationRequest) {
         log.info("controller: updateConfiguration");
         updateConfigurationValidationMethod(updateConfigurationRequest);
-        CreateConfigurationResponse createConfigurationResponse = configurationService.updateConfiguration(updateConfigurationRequest);
-        CustomApiResponse<CreateConfigurationResponse> response = new CustomApiResponse<>();
-        response.setStatusCode(HttpStatus.OK.value());
+        int createConfigurationResponse = configurationService.updateConfiguration(updateConfigurationRequest);
+        if (createConfigurationResponse == 0)  throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update configuration: " + updateConfigurationRequest.getName());
+        CustomApiResponse<String> response = new CustomApiResponse<>();
+        response.setStatusCode(HttpStatus.ACCEPTED.value());
         response.setMessage("Success");
-        response.setData(createConfigurationResponse);
+        response.setData("Updated");
         response.setTimestamp(getCurrentTime());
         return ResponseEntity.ok(response);
     }
-     */
+
 }

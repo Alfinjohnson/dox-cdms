@@ -1,8 +1,6 @@
 package com.dox.cdms.payload.request;
 
-import com.dox.cdms.model.UpdateConfigurationDataModel;
 import lombok.*;
-import java.util.List;
 
 @Getter
 @Setter
@@ -15,5 +13,4 @@ public class UpdateConfigurationRequest {
 
     private String description;
 
-    private List<UpdateConfigurationDataModel> subscribers;
 }

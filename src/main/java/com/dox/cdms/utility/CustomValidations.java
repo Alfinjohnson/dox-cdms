@@ -2,7 +2,6 @@ package com.dox.cdms.utility;
 
 import com.dox.cdms.expectionHandler.CustomException;
 import com.dox.cdms.model.CreateConfigurationDataModel;
-import com.dox.cdms.model.UpdateConfigurationDataModel;
 import com.dox.cdms.payload.request.CreateConfigurationRequest;
 import com.dox.cdms.payload.request.UpdateConfigurationRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -72,51 +71,10 @@ public final class CustomValidations {
             throw new CustomException(HttpStatus.BAD_REQUEST,
                     "Invalid character found in input: '" + updateConfigurationRequest.getName() + "'. Input can only contain alphabetic characters, numbers, and hyphens.");
         if (isNull(updateConfigurationRequest.getDescription())) {
-            log.info("Description is empty");
+            log.info("Description not is empty");
             if (isValidDescription(updateConfigurationRequest.getDescription()))
                 throw new CustomException(HttpStatus.BAD_REQUEST,
                         "Invalid character found in input: '" + updateConfigurationRequest.getDescription() + "'. Check if the description contains only alphanumeric characters, spaces, and common punctuation marks.");
-        }
-        List<UpdateConfigurationDataModel> subscribersList = updateConfigurationRequest.getSubscribers();
-        for (UpdateConfigurationDataModel subscriber : subscribersList) {
-            String name = subscriber.getName();
-            String type = subscriber.getType();
-            Object value = subscriber.getValue();
-            // Perform operations on the subscriber data
-            log.info("Subscriber Name: {}" , name);
-            log.info("Subscriber Type: {}" , type);
-            log.info("Subscriber value: {}", value);
-            if (isNull(name)){
-                log.info("name not empty");
-                if (isValidAlphabeticWithNumberAndUnderScore(name))
-                    throw new CustomException(HttpStatus.BAD_REQUEST,
-                            "Invalid character found in input subscriber name: '" + name + "'. Input can only contain alphabetic characters, numbers, and underscore.");
-            }
-            if (isNull(type)){
-                log.info("name not empty");
-                if (isValidDataType(type))
-                    throw new CustomException(HttpStatus.BAD_REQUEST,
-                            "Invalid character found in input subscriber type: '" + type + "'. types can only contain "+ Arrays.toString(supportedDataTypes));
-
-            }
-
-            if (type.equals("boolean")){
-                if (!value.equals(true) && !value.equals(false)) {
-                    throw new CustomException(HttpStatus.BAD_REQUEST,
-                            "Invalid character found in input subscriber boolean value: " + value);
-                }
-            }
-            if (type.equals("int") || type.equals("integer")){
-                if (isValidInteger(value.toString()))
-                    throw new CustomException(HttpStatus.BAD_REQUEST,
-                            "Invalid character found in input subscriber value: " + value);
-            }
-            if (type.equals("string")){
-                if (isValidAlphabeticWithNumberAndUnderScore(value.toString()))
-                    throw new CustomException(HttpStatus.BAD_REQUEST,
-                            "Invalid character found in input subscriber value: " + value);
-            }
-
         }
     }
 }

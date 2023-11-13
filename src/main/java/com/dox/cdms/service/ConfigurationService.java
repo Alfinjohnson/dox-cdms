@@ -7,6 +7,7 @@ import com.dox.cdms.entity.SubscriberEntity;
 import com.dox.cdms.model.CreateConfigurationDataModel;
 import com.dox.cdms.model.CreatedConfigurationDataModel;
 import com.dox.cdms.payload.request.CreateConfigurationRequest;
+import com.dox.cdms.payload.request.UpdateConfigurationRequest;
 import com.dox.cdms.payload.response.CreateConfigurationResponse;
 import com.dox.cdms.repository.ConfigurationRepository;
 import com.dox.cdms.service.imp.ServiceImp;
@@ -21,6 +22,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dox.cdms.service.imp.ServiceImp.mapConfigDataModelToCreateConfigResponse;
+import static com.dox.cdms.service.imp.ServiceImp.mapSubscriberToConfigurationDataModel;
+
 @Service
 public class ConfigurationService {
 
@@ -31,7 +35,7 @@ public class ConfigurationService {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationService.class);
 
-    public ConfigurationService(ConfigurationRepository configurationRepository, SubscriberService subscriberService, CSDMappingService csdMappingService, ServiceImp serviceImp) {
+    public ConfigurationService(ConfigurationRepository configurationRepository, SubscriberService subscriberService, CSDMappingService csdMappingService) {
         this.configurationRepository = configurationRepository;
         this.csdMappingService = csdMappingService;
         this.subscriberService = subscriberService;
@@ -61,26 +65,22 @@ public class ConfigurationService {
 
     }
 
-    public CreateConfigurationResponse mapConfigDataModelToCreateConfigResponse(@NotNull ConfigurationEntity createdConfig, List<CreatedConfigurationDataModel> createdConfigurationDataModelList ) {
-        CreateConfigurationResponse createConfigurationResponse = new CreateConfigurationResponse();
-        createConfigurationResponse.setId(createdConfig.getId());
-        createConfigurationResponse.setName(createdConfig.getName());
-        createConfigurationResponse.setDescription(createdConfig.getDescription());
-        createConfigurationResponse.setSubscribers(createdConfigurationDataModelList);
-        createConfigurationResponse.setCreatedDateTime(createdConfig.getCreatedDateTime());
-        return createConfigurationResponse;
+
+    /**
+     * update configuration.
+     */
+    @Transactional
+    public int updateConfiguration(@NotNull UpdateConfigurationRequest updateConfigurationRequest) {
+        logger.info("update configuration...");
+        boolean  validateConfigEntityExistError = validateConfigEntityExistByName(updateConfigurationRequest.getName());
+        if (!validateConfigEntityExistError)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Configuration not exists with name: " + updateConfigurationRequest.getName());
+        return updateConfigurationEntity(updateConfigurationRequest);
     }
 
-    public CreatedConfigurationDataModel mapSubscriberToConfigurationDataModel(@NotNull SubscriberEntity subscriberEntity) {
-        CreatedConfigurationDataModel createdConfigurationDataModel = new CreatedConfigurationDataModel();
-        createdConfigurationDataModel.setId(subscriberEntity.getId());
-        createdConfigurationDataModel.setName(subscriberEntity.getName());
-        createdConfigurationDataModel.setDescription(subscriberEntity.getDescription());
-        createdConfigurationDataModel.setDataType(subscriberEntity.getDataType());
-        createdConfigurationDataModel.setValue(ServiceImp.getDTValueMethod(subscriberEntity));
-        return createdConfigurationDataModel;
+    private int updateConfigurationEntity(UpdateConfigurationRequest updateConfigurationRequest) {
+        return configurationRepository.updateConfigDescriptionByName(updateConfigurationRequest.getName(), updateConfigurationRequest.getDescription());
     }
-
 
 
     private @NotNull SubscriberEntity createSubscriber(CreateConfigurationDataModel configModel) {
