@@ -59,7 +59,7 @@ public class ConfigurationController {
         createConfigurationValidationMethod(createConfigurationRequest);
         CreateConfigurationResponse createConfigurationResponse = configurationService.createConfiguration(createConfigurationRequest);
         CustomApiResponse<CreateConfigurationResponse> response = new CustomApiResponse<>();
-        response.setStatusCode(HttpStatus.OK.value());
+        response.setStatusCode(HttpStatus.CREATED.value());
         response.setMessage("Success");
         response.setData(createConfigurationResponse);
         response.setTimestamp(getCurrentTime());

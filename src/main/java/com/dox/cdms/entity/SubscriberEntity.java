@@ -1,9 +1,6 @@
 package com.dox.cdms.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -69,4 +66,14 @@ public class SubscriberEntity {
     @CreatedDate
     @Column("created_datetime")
     private LocalDateTime createdDateTime;
+
+    @PrePersist
+    protected void onCreate() {
+        createdDateTime = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        modifiedDateTime = LocalDateTime.now();
+    }
 }

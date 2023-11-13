@@ -18,7 +18,5 @@ public class CreatedConfigurationDataModel {
 
     private String dataType;
 
-    private boolean enabled;
-
     private Object value;
 }

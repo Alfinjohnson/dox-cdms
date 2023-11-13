@@ -1,8 +1,6 @@
 package com.dox.cdms.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.*;
 import jakarta.persistence.Id;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -45,4 +43,13 @@ public class ConfigurationEntity {
     @Column("created_datetime")
     private LocalDateTime createdDateTime;
 
+    @PrePersist
+    protected void onCreate() {
+        createdDateTime = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        modifiedDateTime = LocalDateTime.now();
+    }
 }

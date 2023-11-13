@@ -41,6 +41,7 @@ public class SubscriberService {
         logger.info("createSubscriber: {}",configModel);
         SubscriberEntity subscriberEntity = new SubscriberEntity();
         subscriberEntity.setName(configModel.getName());
+        subscriberEntity.setDescription(configModel.getDescription());
         subscriberEntity.setDataType(configModel.getType());
         subscriberEntity.setEnabled(true);
         dataDTDeterminer(configModel.getValue(), configModel.getType(),subscriberEntity);

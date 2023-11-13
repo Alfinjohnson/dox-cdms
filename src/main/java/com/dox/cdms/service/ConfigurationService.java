@@ -9,9 +9,8 @@ import com.dox.cdms.model.CreatedConfigurationDataModel;
 import com.dox.cdms.payload.request.CreateConfigurationRequest;
 import com.dox.cdms.payload.response.CreateConfigurationResponse;
 import com.dox.cdms.repository.ConfigurationRepository;
-import com.dox.cdms.repository.SubscriberRepository;
+import com.dox.cdms.service.imp.ServiceImp;
 import org.jetbrains.annotations.NotNull;
-import org.modelmapper.ModelMapper;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,14 +25,14 @@ import java.util.List;
 public class ConfigurationService {
 
     private final ConfigurationRepository configurationRepository;
-    private final ModelMapper modelMapper;
     private final SubscriberService subscriberService;
     private final CSDMappingService csdMappingService;
+
+
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationService.class);
 
-    public ConfigurationService(ConfigurationRepository configurationRepository, ModelMapper modelMapper, SubscriberService subscriberService, CSDMappingService csdMappingService) {
+    public ConfigurationService(ConfigurationRepository configurationRepository, SubscriberService subscriberService, CSDMappingService csdMappingService, ServiceImp serviceImp) {
         this.configurationRepository = configurationRepository;
-        this.modelMapper = modelMapper;
         this.csdMappingService = csdMappingService;
         this.subscriberService = subscriberService;
     }
@@ -52,7 +51,6 @@ public class ConfigurationService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Configuration already exists with name: " + createConfigurationRequest.getName());
         ConfigurationEntity createdConfig = createConfigurationEntity(createConfigurationRequest);
         List<CreatedConfigurationDataModel> createdConfigurationDataModelList = new ArrayList<>();
-
         for (CreateConfigurationDataModel configModel : createConfigurationRequest.getSubscribers()) {
             SubscriberEntity createdSubscriberEntityResponse = createSubscriber(configModel);
             CSDMappingEntity csdMappingResponse = createCSDMappingEntity(createdConfig.getId(), createdSubscriberEntityResponse.getId());
@@ -73,9 +71,17 @@ public class ConfigurationService {
         return createConfigurationResponse;
     }
 
-    public CreatedConfigurationDataModel mapSubscriberToConfigurationDataModel(SubscriberEntity subscriberEntity) {
-        return modelMapper.map(subscriberEntity, CreatedConfigurationDataModel.class);
+    public CreatedConfigurationDataModel mapSubscriberToConfigurationDataModel(@NotNull SubscriberEntity subscriberEntity) {
+        CreatedConfigurationDataModel createdConfigurationDataModel = new CreatedConfigurationDataModel();
+        createdConfigurationDataModel.setId(subscriberEntity.getId());
+        createdConfigurationDataModel.setName(subscriberEntity.getName());
+        createdConfigurationDataModel.setDescription(subscriberEntity.getDescription());
+        createdConfigurationDataModel.setDataType(subscriberEntity.getDataType());
+        createdConfigurationDataModel.setValue(ServiceImp.getDTValueMethod(subscriberEntity));
+        return createdConfigurationDataModel;
     }
+
+
 
     private @NotNull SubscriberEntity createSubscriber(CreateConfigurationDataModel configModel) {
         return subscriberService.createSubscriber(configModel);
