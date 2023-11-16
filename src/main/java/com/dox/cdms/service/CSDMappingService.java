@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 
 /**
  * @apiNote DataType Service
@@ -37,10 +39,15 @@ public class CSDMappingService {
     }
 
     public CSDMappingEntity createCSDMapping(Long newSubscriberId, Long newConfigurationId) {
-        logger.info("newSubscriberId: {}, newConfigurationId:, {}",newSubscriberId,newConfigurationId);
+        logger.info("newSubscriberId: {}, newConfigurationId:, {}",newSubscriberId, newConfigurationId);
         CSDMappingEntity csdMappingEntity = new CSDMappingEntity();
         csdMappingEntity.setConfigurationId(newConfigurationId);
         csdMappingEntity.setSubscriberId(newSubscriberId);
         return csdMappingRepository.save(csdMappingEntity);
     }
+
+    public  ArrayList<Long> findSubscriberByConfigId(long configId) {
+        return csdMappingRepository.findByConfigurationId(configId);
+    }
+
 }

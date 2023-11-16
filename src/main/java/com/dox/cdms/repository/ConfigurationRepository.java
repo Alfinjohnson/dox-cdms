@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 public interface ConfigurationRepository extends JpaRepository<ConfigurationEntity, Long> {
+
+
     @Transactional
     @Modifying
     @Query("update ConfigurationEntity c set c.description = ?2 where c.name = ?1")
@@ -34,4 +37,19 @@ public interface ConfigurationRepository extends JpaRepository<ConfigurationEnti
      */
     @Override
     boolean existsById(@NotNull Long id);
+
+
+    /**
+     * deleteByName
+     * @param name configuration name
+     * @return long
+     */
+    @Transactional
+    long deleteByName(@NonNull String name);
+
+    /**
+     * @param name  configuration name
+     * @return ConfigurationEntity
+     */
+    ConfigurationEntity findByName(@NonNull String name);
 }

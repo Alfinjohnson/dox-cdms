@@ -2,17 +2,16 @@ package com.dox.cdms.payload.response;
 
 import com.dox.cdms.model.SubscribersDataModel;
 import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
-
-@Builder
+@Setter
+@Getter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@ToString
-public class CreateConfigurationResponse {
+public class GetFullConfigurationResponse {
 
     private Long id;
 
@@ -24,4 +23,5 @@ public class CreateConfigurationResponse {
 
     private LocalDateTime createdDateTime;
 
+    private LocalDateTime modifiedDateTime;
 }

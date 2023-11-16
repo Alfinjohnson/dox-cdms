@@ -5,10 +5,12 @@ import com.dox.cdms.entity.CSDMappingEntity;
 import com.dox.cdms.entity.ConfigurationEntity;
 import com.dox.cdms.entity.SubscriberEntity;
 import com.dox.cdms.model.CreateConfigurationDataModel;
-import com.dox.cdms.model.CreatedConfigurationDataModel;
+import com.dox.cdms.model.SubscribersDataModel;
 import com.dox.cdms.payload.request.CreateConfigurationRequest;
+import com.dox.cdms.payload.request.DeleteConfigurationRequest;
 import com.dox.cdms.payload.request.UpdateConfigurationRequest;
 import com.dox.cdms.payload.response.CreateConfigurationResponse;
+import com.dox.cdms.payload.response.GetFullConfigurationResponse;
 import com.dox.cdms.repository.ConfigurationRepository;
 import com.dox.cdms.service.imp.ServiceImp;
 import org.jetbrains.annotations.NotNull;
@@ -18,10 +20,9 @@ import org.springframework.web.server.ResponseStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
 import static com.dox.cdms.service.imp.ServiceImp.mapConfigDataModelToCreateConfigResponse;
 import static com.dox.cdms.service.imp.ServiceImp.mapSubscriberToConfigurationDataModel;
 
@@ -54,14 +55,14 @@ public class ConfigurationService {
         if (validateConfigEntityExistError)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Configuration already exists with name: " + createConfigurationRequest.getName());
         ConfigurationEntity createdConfig = createConfigurationEntity(createConfigurationRequest);
-        List<CreatedConfigurationDataModel> createdConfigurationDataModelList = new ArrayList<>();
+        List<SubscribersDataModel> subscribersDataModelList = new ArrayList<>();
         for (CreateConfigurationDataModel configModel : createConfigurationRequest.getSubscribers()) {
             SubscriberEntity createdSubscriberEntityResponse = createSubscriber(configModel);
-            CSDMappingEntity csdMappingResponse = createCSDMappingEntity(createdConfig.getId(), createdSubscriberEntityResponse.getId());
+            CSDMappingEntity csdMappingResponse = createCSDMappingEntity(createdSubscriberEntityResponse.getId(),createdConfig.getId());
             logger.info("created csdMapping id: {}",csdMappingResponse.getId());
-            createdConfigurationDataModelList.add(mapSubscriberToConfigurationDataModel(createdSubscriberEntityResponse));
+            subscribersDataModelList.add(mapSubscriberToConfigurationDataModel(createdSubscriberEntityResponse));
         }
-        return mapConfigDataModelToCreateConfigResponse(createdConfig,createdConfigurationDataModelList);
+        return mapConfigDataModelToCreateConfigResponse(createdConfig, subscribersDataModelList);
 
     }
 
@@ -78,7 +79,8 @@ public class ConfigurationService {
         return updateConfigurationEntity(updateConfigurationRequest);
     }
 
-    private int updateConfigurationEntity(UpdateConfigurationRequest updateConfigurationRequest) {
+    @Transactional
+    private int updateConfigurationEntity(@NotNull UpdateConfigurationRequest updateConfigurationRequest) {
         return configurationRepository.updateConfigDescriptionByName(updateConfigurationRequest.getName(), updateConfigurationRequest.getDescription());
     }
 
@@ -105,4 +107,62 @@ public class ConfigurationService {
         configurationEntity.setDescription(createConfigurationRequest.getDescription());
         return configurationRepository.save(configurationEntity);
     }
+
+    @Transactional
+    public long deleteConfiguration(@NotNull DeleteConfigurationRequest deleteConfigurationRequest) {
+        return configurationRepository.deleteByName(deleteConfigurationRequest.getName());
+    }
+
+    public GetFullConfigurationResponse getFullConfiguration(String configName) {
+        ConfigurationEntity configurationEntity = findConfigurationByName(configName);
+        List<SubscribersDataModel> subscribersList = new ArrayList<>();
+        ArrayList<Long> subscribersId = csdMappingService.findSubscriberByConfigId(configurationEntity.getId());
+        for (Long subscriberId : subscribersId) {
+            logger.info("Subscriber ID: " + subscriberId);
+            subscribersList.add(findSubscribersById(subscriberId));
+        }
+        return buildGetFullConfigurationResponse(configurationEntity, subscribersList);
+    }
+
+    @NotNull
+    private static GetFullConfigurationResponse buildGetFullConfigurationResponse(@NotNull ConfigurationEntity configurationEntity, List<SubscribersDataModel> subscribersList) {
+        GetFullConfigurationResponse getFullConfigurationResponse = new GetFullConfigurationResponse();
+        getFullConfigurationResponse.setId(configurationEntity.getId());
+        getFullConfigurationResponse.setName(configurationEntity.getName());
+        getFullConfigurationResponse.setDescription(configurationEntity.getDescription());
+        getFullConfigurationResponse.setSubscribers(subscribersList);
+        getFullConfigurationResponse.setCreatedDateTime(configurationEntity.getCreatedDateTime());
+        getFullConfigurationResponse.setModifiedDateTime(configurationEntity.getModifiedDateTime());
+        return getFullConfigurationResponse;
+    }
+
+    private @NotNull SubscribersDataModel findSubscribersById(Long subscriberId) {
+        SubscribersDataModel subscribersDataModel = new SubscribersDataModel();
+        Optional<SubscriberEntity> subscriberEntityOptional = subscriberService.findSubscribersById(subscriberId);
+        if (subscriberEntityOptional.isPresent()) {
+            SubscriberEntity subscriberEntity = subscriberEntityOptional.get();
+            subscribersDataModel.setId(subscriberEntity.getId());
+            subscribersDataModel.setName(subscriberEntity.getName());
+            subscribersDataModel.setDescription(subscriberEntity.getDescription());
+            subscribersDataModel.setDataType(subscriberEntity.getDataType());
+            subscribersDataModel.setValue(ServiceImp.getDTValueMethod(subscriberEntity));
+            return subscribersDataModel;
+        } else {
+            // Handle the case where the subscriber with the given ID is not found
+            // You might want to throw an exception or return null, depending on your use case
+            throw new NotFoundException("Subscriber not found with ID: " + subscriberId);
+        }
+    }
+
+    public static class NotFoundException extends RuntimeException {
+        public NotFoundException(String message) {
+            super(message);
+        }
+    }
+
+    private ConfigurationEntity findConfigurationByName(String name){
+        return configurationRepository.findByName(name);
+
+    }
+
 }

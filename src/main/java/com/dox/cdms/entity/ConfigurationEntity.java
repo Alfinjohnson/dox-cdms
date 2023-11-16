@@ -12,6 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.time.LocalDateTime;
 
 /**
+ * TODO : add enable filed
  * Entity for configuration
  */
 @Builder

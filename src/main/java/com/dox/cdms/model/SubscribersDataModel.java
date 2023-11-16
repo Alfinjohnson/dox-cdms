@@ -8,7 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class CreatedConfigurationDataModel {
+public class SubscribersDataModel {
 
     private Long id;
 

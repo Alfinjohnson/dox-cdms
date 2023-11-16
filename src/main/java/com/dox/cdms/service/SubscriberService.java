@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 /**
  * @apiNote Subscriber service
@@ -56,4 +58,7 @@ public class SubscriberService {
         if (type.equals("json_dt")) subscriberEntity.setJson_dt(((String) value));
     }
 
+    public Optional<SubscriberEntity> findSubscribersById(Long subscriberId) {
+        return subscriberRepository.findById(subscriberId);
+    }
 }
