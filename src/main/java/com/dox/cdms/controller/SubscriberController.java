@@ -3,13 +3,7 @@ package com.dox.cdms.controller;
 
 import com.dox.cdms.model.CustomApiResponse;
 import com.dox.cdms.model.SubscribersDataModel;
-import com.dox.cdms.payload.request.CreateConfigurationRequest;
-import com.dox.cdms.payload.request.DeleteConfigurationRequest;
-import com.dox.cdms.payload.request.UpdateConfigurationRequest;
 import com.dox.cdms.payload.request.UpdateSubscriberRequest;
-import com.dox.cdms.payload.response.CreateConfigurationResponse;
-import com.dox.cdms.payload.response.GetFullConfigurationResponse;
-import com.dox.cdms.payload.response.GetSubscriberResponse;
 import com.dox.cdms.payload.response.UpdateSubscriberResponse;
 import com.dox.cdms.service.SubscriberService;
 import lombok.extern.slf4j.Slf4j;
