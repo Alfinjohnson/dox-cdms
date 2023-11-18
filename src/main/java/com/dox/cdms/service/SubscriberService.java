@@ -3,7 +3,11 @@ package com.dox.cdms.service;
 
 import com.dox.cdms.entity.SubscriberEntity;
 import com.dox.cdms.model.CreateConfigurationDataModel;
+import com.dox.cdms.model.SubscribersDataModel;
+import com.dox.cdms.payload.request.UpdateSubscriberRequest;
+import com.dox.cdms.payload.response.UpdateSubscriberResponse;
 import com.dox.cdms.repository.SubscriberRepository;
+import com.dox.cdms.service.imp.ServiceImp;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -25,18 +29,17 @@ public class SubscriberService {
     @Autowired
     private final SubscriberRepository subscriberRepository;
 
+    private final ServiceImp serviceImp;
+
     private static final Logger logger = LoggerFactory.getLogger(SubscriberService.class);
 
     @Getter
     @Autowired
     private ModelMapper modelMapper;
 
-    /**
-     * constructor for Autowired classes
-     * @param subscriberRepository  constructor
-     */
-    public SubscriberService(SubscriberRepository subscriberRepository) {
+    public SubscriberService(SubscriberRepository subscriberRepository, ServiceImp serviceImp) {
         this.subscriberRepository = subscriberRepository;
+        this.serviceImp = serviceImp;
     }
 
     @NotNull SubscriberEntity createSubscriber(@NotNull CreateConfigurationDataModel configModel) {
@@ -60,5 +63,18 @@ public class SubscriberService {
 
     public Optional<SubscriberEntity> findSubscribersById(Long subscriberId) {
         return subscriberRepository.findById(subscriberId);
+    }
+
+    public UpdateSubscriberResponse updateSubscriber(@NotNull UpdateSubscriberRequest updateSubscriberRequest) {
+        return subscriberRepository.updateNameAndDescriptionAndEnabledAndBoolean_dtAndString_dtAndDouble_dtAndInteger_dtAndFloat_dtAndJson_dtById(updateSubscriberRequest.getName(),
+                updateSubscriberRequest.getDescription(),updateSubscriberRequest.isEnabled(),updateSubscriberRequest.getDataType() );
+    }
+
+    public void deleteSubscriber(Long subscriberId) {
+        subscriberRepository.deleteById(subscriberId);
+    }
+
+    public SubscribersDataModel getSubscriber(Long subscriberId) {
+        return serviceImp.findSubscribersById(subscriberId);
     }
 }

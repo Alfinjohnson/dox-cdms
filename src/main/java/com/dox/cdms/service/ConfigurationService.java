@@ -22,9 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import static com.dox.cdms.service.imp.ServiceImp.mapConfigDataModelToCreateConfigResponse;
-import static com.dox.cdms.service.imp.ServiceImp.mapSubscriberToConfigurationDataModel;
+
+import static com.dox.cdms.service.imp.ServiceImp.*;
 
 @Service
 public class ConfigurationService {
@@ -33,13 +32,16 @@ public class ConfigurationService {
     private final SubscriberService subscriberService;
     private final CSDMappingService csdMappingService;
 
+    private final ServiceImp serviceImp;
+
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationService.class);
 
-    public ConfigurationService(ConfigurationRepository configurationRepository, SubscriberService subscriberService, CSDMappingService csdMappingService) {
+    public ConfigurationService(ConfigurationRepository configurationRepository, SubscriberService subscriberService, CSDMappingService csdMappingService, ServiceImp serviceImp) {
         this.configurationRepository = configurationRepository;
         this.csdMappingService = csdMappingService;
         this.subscriberService = subscriberService;
+        this.serviceImp = serviceImp;
     }
 
     /**
@@ -119,7 +121,7 @@ public class ConfigurationService {
         ArrayList<Long> subscribersId = csdMappingService.findSubscriberByConfigId(configurationEntity.getId());
         for (Long subscriberId : subscribersId) {
             logger.info("Subscriber ID: " + subscriberId);
-            subscribersList.add(findSubscribersById(subscriberId));
+            subscribersList.add(serviceImp.findSubscribersById(subscriberId));
         }
         return buildGetFullConfigurationResponse(configurationEntity, subscribersList);
     }
@@ -136,23 +138,7 @@ public class ConfigurationService {
         return getFullConfigurationResponse;
     }
 
-    private @NotNull SubscribersDataModel findSubscribersById(Long subscriberId) {
-        SubscribersDataModel subscribersDataModel = new SubscribersDataModel();
-        Optional<SubscriberEntity> subscriberEntityOptional = subscriberService.findSubscribersById(subscriberId);
-        if (subscriberEntityOptional.isPresent()) {
-            SubscriberEntity subscriberEntity = subscriberEntityOptional.get();
-            subscribersDataModel.setId(subscriberEntity.getId());
-            subscribersDataModel.setName(subscriberEntity.getName());
-            subscribersDataModel.setDescription(subscriberEntity.getDescription());
-            subscribersDataModel.setDataType(subscriberEntity.getDataType());
-            subscribersDataModel.setValue(ServiceImp.getDTValueMethod(subscriberEntity));
-            return subscribersDataModel;
-        } else {
-            // Handle the case where the subscriber with the given ID is not found
-            // You might want to throw an exception or return null, depending on your use case
-            throw new NotFoundException("Subscriber not found with ID: " + subscriberId);
-        }
-    }
+
 
     public static class NotFoundException extends RuntimeException {
         public NotFoundException(String message) {

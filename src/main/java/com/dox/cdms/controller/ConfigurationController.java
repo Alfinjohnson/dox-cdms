@@ -27,7 +27,7 @@ import static com.dox.cdms.utility.CustomValidations.*;
  */
 @RestController
 @RequestMapping("/api/v1/configuration")
-@Slf4j(topic = "RestController")
+@Slf4j(topic = "RestConfigurationController")
 public class ConfigurationController {
 
     @Autowired
@@ -120,7 +120,7 @@ public class ConfigurationController {
         getConfigurationValidationMethod(configName);
         GetFullConfigurationResponse getFullConfiguration = configurationService.getFullConfiguration(configName);
         CustomApiResponse<GetFullConfigurationResponse> response = new CustomApiResponse<>();
-        response.setStatusCode(HttpStatus.CREATED.value());
+        response.setStatusCode(HttpStatus.OK.value());
         response.setMessage("Success");
         response.setData(getFullConfiguration);
         response.setTimestamp(getCurrentTime());

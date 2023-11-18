@@ -5,6 +5,7 @@ import com.dox.cdms.model.CreateConfigurationDataModel;
 import com.dox.cdms.payload.request.CreateConfigurationRequest;
 import com.dox.cdms.payload.request.DeleteConfigurationRequest;
 import com.dox.cdms.payload.request.UpdateConfigurationRequest;
+import com.dox.cdms.payload.request.UpdateSubscriberRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
@@ -89,5 +90,17 @@ public final class CustomValidations {
         if (isValidAlphabeticWithNumberAndHyphen(configName))
             throw new CustomException(HttpStatus.BAD_REQUEST,
                     "Invalid character found in input: '" + configName + "'. Input can only contain alphabetic characters, numbers, and hyphens.");
+    }
+
+    public static void updateSubscriberValidationMethod(@NotNull UpdateSubscriberRequest updateSubscriberRequest) {
+        if (isValidAlphabeticWithNumberAndHyphen(updateSubscriberRequest.getName()))
+            throw new CustomException(HttpStatus.BAD_REQUEST,
+                    "Invalid character found in input: '" + updateSubscriberRequest.getName() + "'. Input can only contain alphabetic characters, numbers, and hyphens.");
+        if (isNull(updateSubscriberRequest.getDescription())) {
+            log.info("Description not is empty");
+            if (isValidDescription(updateSubscriberRequest.getDescription()))
+                throw new CustomException(HttpStatus.BAD_REQUEST,
+                        "Invalid character found in input: '" + updateSubscriberRequest.getDescription() + "'. Check if the description contains only alphanumeric characters, spaces, and common punctuation marks.");
+        }
     }
 }
