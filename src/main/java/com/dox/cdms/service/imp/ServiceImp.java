@@ -66,6 +66,7 @@ public class ServiceImp {
             subscribersDataModel.setId(subscriberEntity.getId());
             subscribersDataModel.setName(subscriberEntity.getName());
             subscribersDataModel.setDescription(subscriberEntity.getDescription());
+            subscribersDataModel.setEnabled(subscriberEntity.getEnabled());
             subscribersDataModel.setDataType(subscriberEntity.getDataType());
             subscribersDataModel.setValue(ServiceImp.getDTValueMethod(subscriberEntity));
             return subscribersDataModel;

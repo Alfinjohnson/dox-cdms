@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
@@ -20,10 +21,26 @@ import java.util.Optional;
 public interface SubscriberRepository extends JpaRepository<SubscriberEntity, Long> {
     @Transactional
     @Modifying
-    @Query("""
-            update SubscriberEntity s set s.name = ?1, s.description = ?2, s.enabled = ?3, s.boolean_dt = ?4, s.string_dt = ?5, s.double_dt = ?6, s.integer_dt = ?7, s.float_dt = ?8, s.json_dt = ?9
-            where s.id = ?10""")
-    int updateNameAndDescriptionAndEnabledAndBoolean_dtAndString_dtAndDouble_dtAndInteger_dtAndFloat_dtAndJson_dtById(@Nullable String name, @Nullable String description, @Nullable boolean enabled, @Nullable Boolean boolean_dt, @Nullable String string_dt, @Nullable Double double_dt, @Nullable Integer integer_dt, @Nullable Float float_dt, @Nullable String json_dt, @NonNull Long id);
+    @Query(value = """
+            update SubscriberEntity s set
+            s.name = :name,
+            s.description = :description,
+            s.enabled = :enabled,
+            s.dataType = :dataType,
+            s.boolean_dt = CASE WHEN :dataType = 'boolean' THEN :value ELSE s.boolean_dt END,
+            s.string_dt = CASE WHEN :dataType = 'string' THEN :value ELSE s.string_dt END,
+            s.double_dt = CASE WHEN :dataType = 'double' THEN :value ELSE s.double_dt END,
+            s.integer_dt = CASE WHEN :dataType = 'integer' THEN :value ELSE s.integer_dt END,
+            s.float_dt = CASE WHEN :dataType = 'float' THEN :value ELSE s.float_dt END,
+            s.json_dt = CASE WHEN :dataType = 'json' THEN :value ELSE s.json_dt END
+            where s.id = :id""")
+    int updateNameAndDescriptionAndEnabledAndBoolean_dtAndString_dtAndDouble_dtAndInteger_dtAndFloat_dtAndJson_dtById(
+            @Param("name") @Nullable String name,
+            @Param("description") @Nullable String description,
+            @Param("enabled") @Nullable boolean enabled,
+            @Param("dataType") @Nullable String dataType,
+            @Param("value") @Nullable Object value,
+            @Param("id") @Nullable Long id);
 
     @Override
     @NotNull

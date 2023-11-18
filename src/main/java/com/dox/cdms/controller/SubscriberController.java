@@ -4,7 +4,6 @@ package com.dox.cdms.controller;
 import com.dox.cdms.model.CustomApiResponse;
 import com.dox.cdms.model.SubscribersDataModel;
 import com.dox.cdms.payload.request.UpdateSubscriberRequest;
-import com.dox.cdms.payload.response.UpdateSubscriberResponse;
 import com.dox.cdms.service.SubscriberService;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -50,14 +49,16 @@ public class SubscriberController {
     }
     @NonNull
     @PutMapping(path = "/byId")
-    private ResponseEntity<CustomApiResponse<UpdateSubscriberResponse>> updateSubscriber(@NonNull @RequestBody UpdateSubscriberRequest updateSubscriberRequest) {
+    private ResponseEntity<CustomApiResponse<SubscribersDataModel>> updateSubscriber(@NonNull @RequestBody UpdateSubscriberRequest updateSubscriberRequest) {
         log.info("controller: updateSubscriber");
         updateSubscriberValidationMethod(updateSubscriberRequest);
-        UpdateSubscriberResponse createSubscriberResponse = subscriberService.updateSubscriber(updateSubscriberRequest);
-         CustomApiResponse<UpdateSubscriberResponse> response = new CustomApiResponse<>();
+        int updateSubscriberResponse = subscriberService.updateSubscriber(updateSubscriberRequest);
+        if (updateSubscriberResponse > 1)  throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "unable to update subscriber");
+        SubscribersDataModel getSubscriberResponse = subscriberService.getSubscriber(updateSubscriberRequest.getId());
+        CustomApiResponse<SubscribersDataModel> response = new CustomApiResponse<>();
         response.setStatusCode(HttpStatus.ACCEPTED.value());
         response.setMessage("Success");
-        response.setData(createSubscriberResponse);
+        response.setData(getSubscriberResponse);
         response.setTimestamp(getCurrentTime());
         return ResponseEntity.ok(response);
     }

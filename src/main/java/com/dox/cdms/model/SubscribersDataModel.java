@@ -18,5 +18,7 @@ public class SubscribersDataModel {
 
     private String dataType;
 
+    private Boolean enabled;
+
     private Object value;
 }

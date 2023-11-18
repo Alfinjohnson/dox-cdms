@@ -5,7 +5,6 @@ import com.dox.cdms.entity.SubscriberEntity;
 import com.dox.cdms.model.CreateConfigurationDataModel;
 import com.dox.cdms.model.SubscribersDataModel;
 import com.dox.cdms.payload.request.UpdateSubscriberRequest;
-import com.dox.cdms.payload.response.UpdateSubscriberResponse;
 import com.dox.cdms.repository.SubscriberRepository;
 import com.dox.cdms.service.imp.ServiceImp;
 import lombok.Getter;
@@ -65,9 +64,9 @@ public class SubscriberService {
         return subscriberRepository.findById(subscriberId);
     }
 
-    public UpdateSubscriberResponse updateSubscriber(@NotNull UpdateSubscriberRequest updateSubscriberRequest) {
+    public int updateSubscriber(@NotNull UpdateSubscriberRequest updateSubscriberRequest) {
         return subscriberRepository.updateNameAndDescriptionAndEnabledAndBoolean_dtAndString_dtAndDouble_dtAndInteger_dtAndFloat_dtAndJson_dtById(updateSubscriberRequest.getName(),
-                updateSubscriberRequest.getDescription(),updateSubscriberRequest.isEnabled(),updateSubscriberRequest.getDataType() );
+                updateSubscriberRequest.getDescription(),updateSubscriberRequest.isEnabled(),updateSubscriberRequest.getDataType(),updateSubscriberRequest.getValue(),updateSubscriberRequest.getId() );
     }
 
     public void deleteSubscriber(Long subscriberId) {

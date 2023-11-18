@@ -39,7 +39,7 @@ public class SubscriberEntity {
     private String dataType;
 
     @Column("enabled")
-    private boolean enabled;
+    private Boolean enabled;
 
     @Column("boolean_dt")
     private Boolean boolean_dt;
