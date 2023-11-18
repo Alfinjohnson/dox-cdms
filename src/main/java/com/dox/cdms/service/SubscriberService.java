@@ -74,6 +74,15 @@ public class SubscriberService {
     }
 
     public SubscribersDataModel getSubscriber(Long subscriberId) {
-        return serviceImp.findSubscribersById(subscriberId);
+        Optional<SubscriberEntity> subscriberEntityOptional = findSubscribersById(subscriberId);
+        if (subscriberEntityOptional.isPresent()) {
+            SubscriberEntity subscriberEntity = subscriberEntityOptional.get();
+            return serviceImp.findSubscribersById(subscriberEntity);
+        } else {
+        // Handle the case where the subscriber with the given ID is not found
+        // You might want to throw an exception or return null, depending on your use case
+        throw new ConfigurationService.NotFoundException("Subscriber not found with ID: "+subscriberId);
+    }
+
     }
 }

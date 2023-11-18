@@ -32,8 +32,6 @@ public class ConfigurationService {
     private final SubscriberService subscriberService;
     private final CSDMappingService csdMappingService;
 
-    private final ServiceImp serviceImp;
-
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationService.class);
 
@@ -41,7 +39,6 @@ public class ConfigurationService {
         this.configurationRepository = configurationRepository;
         this.csdMappingService = csdMappingService;
         this.subscriberService = subscriberService;
-        this.serviceImp = serviceImp;
     }
 
     /**
@@ -121,7 +118,7 @@ public class ConfigurationService {
         ArrayList<Long> subscribersId = csdMappingService.findSubscriberByConfigId(configurationEntity.getId());
         for (Long subscriberId : subscribersId) {
             logger.info("Subscriber ID: " + subscriberId);
-            subscribersList.add(serviceImp.findSubscribersById(subscriberId));
+            subscribersList.add(subscriberService.getSubscriber(subscriberId));
         }
         return buildGetFullConfigurationResponse(configurationEntity, subscribersList);
     }
