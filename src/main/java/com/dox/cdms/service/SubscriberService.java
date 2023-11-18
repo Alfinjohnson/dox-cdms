@@ -14,7 +14,9 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -66,7 +68,7 @@ public class SubscriberService {
 
     public int updateSubscriber(@NotNull UpdateSubscriberRequest updateSubscriberRequest) {
         return subscriberRepository.updateNameAndDescriptionAndEnabledAndBoolean_dtAndString_dtAndDouble_dtAndInteger_dtAndFloat_dtAndJson_dtById(updateSubscriberRequest.getName(),
-                updateSubscriberRequest.getDescription(),updateSubscriberRequest.isEnabled(),updateSubscriberRequest.getDataType(),updateSubscriberRequest.getValue(),updateSubscriberRequest.getId() );
+                updateSubscriberRequest.getDescription(),updateSubscriberRequest.getEnabled(),updateSubscriberRequest.getDataType(),updateSubscriberRequest.getValue(),updateSubscriberRequest.getId());
     }
 
     public void deleteSubscriber(Long subscriberId) {
@@ -79,9 +81,7 @@ public class SubscriberService {
             SubscriberEntity subscriberEntity = subscriberEntityOptional.get();
             return serviceImp.findSubscribersById(subscriberEntity);
         } else {
-        // Handle the case where the subscriber with the given ID is not found
-        // You might want to throw an exception or return null, depending on your use case
-        throw new ConfigurationService.NotFoundException("Subscriber not found with ID: "+subscriberId);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "subscriber id not found");
     }
 
     }

@@ -48,12 +48,12 @@ public class SubscriberController {
         return ResponseEntity.ok(response) ;
     }
     @NonNull
-    @PutMapping(path = "/byId")
+    @PutMapping
     private ResponseEntity<CustomApiResponse<SubscribersDataModel>> updateSubscriber(@NonNull @RequestBody UpdateSubscriberRequest updateSubscriberRequest) {
         log.info("controller: updateSubscriber");
         updateSubscriberValidationMethod(updateSubscriberRequest);
         int updateSubscriberResponse = subscriberService.updateSubscriber(updateSubscriberRequest);
-        if (updateSubscriberResponse > 1)  throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "unable to update subscriber");
+        if (updateSubscriberResponse == 0)  throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "unable to update subscriber");
         SubscribersDataModel getSubscriberResponse = subscriberService.getSubscriber(updateSubscriberRequest.getId());
         CustomApiResponse<SubscribersDataModel> response = new CustomApiResponse<>();
         response.setStatusCode(HttpStatus.ACCEPTED.value());
@@ -66,7 +66,7 @@ public class SubscriberController {
     @DeleteMapping("/{id}")
     private ResponseEntity<CustomApiResponse<String>> deleteSubscriber(@NonNull @RequestParam("id") Long subscriberId) {
         log.info("controller: deleteSubscriber");
-        if (subscriberId > 1)  throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "subscriber id is empty");
+        if (subscriberId < 1)  throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "subscriber id is empty");
         subscriberService.deleteSubscriber(subscriberId);
         CustomApiResponse<String> response = new CustomApiResponse<>();
         response.setStatusCode(HttpStatus.ACCEPTED.value());
@@ -79,10 +79,10 @@ public class SubscriberController {
      * @return configuration Entity,
      * @apiNote endpoint for creating new Configuration
      */
-    @GetMapping("/f/{id}")
+    @GetMapping("/{id}")
     private @NotNull ResponseEntity<CustomApiResponse<SubscribersDataModel>> getSubscriber(@NonNull @RequestParam("id") Long subscriberId) {
-        logger.info("controller: getSubscriber");
-        if (subscriberId > 1)  throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "subscriber id is empty");
+        logger.info("controller: getSubscriber {}",subscriberId);
+        if (subscriberId < 1)  throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "subscriber id is empty");
         SubscribersDataModel getSubscriberResponse = subscriberService.getSubscriber(subscriberId);
         CustomApiResponse<SubscribersDataModel> response = new CustomApiResponse<>();
         response.setStatusCode(HttpStatus.OK.value());

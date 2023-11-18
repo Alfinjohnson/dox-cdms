@@ -12,7 +12,6 @@ import com.dox.cdms.payload.request.UpdateConfigurationRequest;
 import com.dox.cdms.payload.response.CreateConfigurationResponse;
 import com.dox.cdms.payload.response.GetFullConfigurationResponse;
 import com.dox.cdms.repository.ConfigurationRepository;
-import com.dox.cdms.service.imp.ServiceImp;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpStatus;
@@ -35,7 +34,7 @@ public class ConfigurationService {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationService.class);
 
-    public ConfigurationService(ConfigurationRepository configurationRepository, SubscriberService subscriberService, CSDMappingService csdMappingService, ServiceImp serviceImp) {
+    public ConfigurationService(ConfigurationRepository configurationRepository, SubscriberService subscriberService, CSDMappingService csdMappingService) {
         this.configurationRepository = configurationRepository;
         this.csdMappingService = csdMappingService;
         this.subscriberService = subscriberService;
@@ -104,6 +103,7 @@ public class ConfigurationService {
         ConfigurationEntity configurationEntity = new ConfigurationEntity();
         configurationEntity.setName(createConfigurationRequest.getName());
         configurationEntity.setDescription(createConfigurationRequest.getDescription());
+        configurationEntity.setEnabled(true);
         return configurationRepository.save(configurationEntity);
     }
 
@@ -133,14 +133,6 @@ public class ConfigurationService {
         getFullConfigurationResponse.setCreatedDateTime(configurationEntity.getCreatedDateTime());
         getFullConfigurationResponse.setModifiedDateTime(configurationEntity.getModifiedDateTime());
         return getFullConfigurationResponse;
-    }
-
-
-
-    public static class NotFoundException extends RuntimeException {
-        public NotFoundException(String message) {
-            super(message);
-        }
     }
 
     private ConfigurationEntity findConfigurationByName(String name){

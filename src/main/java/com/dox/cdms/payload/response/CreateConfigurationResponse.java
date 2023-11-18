@@ -20,6 +20,8 @@ public class CreateConfigurationResponse {
 
     private String description;
 
+    private Boolean enabled;
+
     private List<SubscribersDataModel> subscribers;
 
     private LocalDateTime createdDateTime;

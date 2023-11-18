@@ -36,6 +36,9 @@ public class ConfigurationEntity {
     @Column("description")
     private String description;
 
+    @Column("enabled")
+    private Boolean enabled;
+
     @LastModifiedDate
     @Column( "modified_datetime")
     private LocalDateTime modifiedDateTime;

@@ -30,21 +30,23 @@ public class ServiceImp {
     }
 
 
-    public static CreateConfigurationResponse mapConfigDataModelToCreateConfigResponse(@NotNull ConfigurationEntity createdConfig, List<SubscribersDataModel> subscribersDataModelList) {
+    public static @NotNull CreateConfigurationResponse mapConfigDataModelToCreateConfigResponse(@NotNull ConfigurationEntity createdConfig, List<SubscribersDataModel> subscribersDataModelList) {
         CreateConfigurationResponse createConfigurationResponse = new CreateConfigurationResponse();
         createConfigurationResponse.setId(createdConfig.getId());
         createConfigurationResponse.setName(createdConfig.getName());
         createConfigurationResponse.setDescription(createdConfig.getDescription());
+        createConfigurationResponse.setEnabled(createdConfig.getEnabled());
         createConfigurationResponse.setSubscribers(subscribersDataModelList);
         createConfigurationResponse.setCreatedDateTime(createdConfig.getCreatedDateTime());
         return createConfigurationResponse;
     }
 
-    public static SubscribersDataModel mapSubscriberToConfigurationDataModel(@NotNull SubscriberEntity subscriberEntity) {
+    public static @NotNull SubscribersDataModel mapSubscriberToConfigurationDataModel(@NotNull SubscriberEntity subscriberEntity) {
         SubscribersDataModel subscribersDataModel = new SubscribersDataModel();
         subscribersDataModel.setId(subscriberEntity.getId());
         subscribersDataModel.setName(subscriberEntity.getName());
         subscribersDataModel.setDescription(subscriberEntity.getDescription());
+        subscribersDataModel.setEnabled(subscriberEntity.getEnabled());
         subscribersDataModel.setDataType(subscriberEntity.getDataType());
         subscribersDataModel.setValue(ServiceImp.getDTValueMethod(subscriberEntity));
         return subscribersDataModel;

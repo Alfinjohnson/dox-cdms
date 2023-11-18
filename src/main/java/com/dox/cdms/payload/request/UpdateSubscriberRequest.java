@@ -12,7 +12,7 @@ public class UpdateSubscriberRequest {
     private Long id;
     private String name;
     private String description;
-    private boolean enabled;
+    private Boolean enabled;
     private String dataType;
     private Object value;
 }
