@@ -8,9 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class UpdateConfigurationRequest {
-
     private String name;
-
     private String description;
 
 }

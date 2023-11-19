@@ -1,6 +1,7 @@
 package com.dox.cdms.controller;
 
 
+import com.dox.cdms.entity.SubscriberEntity;
 import com.dox.cdms.model.CustomApiResponse;
 import com.dox.cdms.model.SubscribersDataModel;
 import com.dox.cdms.payload.request.UpdateSubscriberRequest;
@@ -49,16 +50,16 @@ public class SubscriberController {
     }
     @NonNull
     @PutMapping
-    private ResponseEntity<CustomApiResponse<SubscribersDataModel>> updateSubscriber(@NonNull @RequestBody UpdateSubscriberRequest updateSubscriberRequest) {
+    private ResponseEntity<CustomApiResponse<SubscriberEntity>> updateSubscriber(@NonNull @RequestBody UpdateSubscriberRequest updateSubscriberRequest) {
         log.info("controller: updateSubscriber");
         updateSubscriberValidationMethod(updateSubscriberRequest);
-        int updateSubscriberResponse = subscriberService.updateSubscriber(updateSubscriberRequest);
-        if (updateSubscriberResponse == 0)  throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "unable to update subscriber");
-        SubscribersDataModel getSubscriberResponse = subscriberService.getSubscriber(updateSubscriberRequest.getId());
-        CustomApiResponse<SubscribersDataModel> response = new CustomApiResponse<>();
+        SubscriberEntity updateSubscriberResponse = subscriberService.updateSubscriber(updateSubscriberRequest);
+        //if (updateSubscriberResponse == 0)  throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "unable to update subscriber");
+        //SubscribersDataModel getSubscriberResponse = subscriberService.getSubscriber(updateSubscriberRequest.getId());
+        CustomApiResponse<SubscriberEntity> response = new CustomApiResponse<>();
         response.setStatusCode(HttpStatus.ACCEPTED.value());
         response.setMessage("Success");
-        response.setData(getSubscriberResponse);
+        response.setData(updateSubscriberResponse);
         response.setTimestamp(getCurrentTime());
         return ResponseEntity.ok(response);
     }

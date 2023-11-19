@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -66,9 +67,36 @@ public class SubscriberService {
         return subscriberRepository.findById(subscriberId);
     }
 
-    public int updateSubscriber(@NotNull UpdateSubscriberRequest updateSubscriberRequest) {
-        return subscriberRepository.updateNameAndDescriptionAndEnabledAndBoolean_dtAndString_dtAndDouble_dtAndInteger_dtAndFloat_dtAndJson_dtById(updateSubscriberRequest.getName(),
-                updateSubscriberRequest.getDescription(),updateSubscriberRequest.getEnabled(),updateSubscriberRequest.getDataType(),updateSubscriberRequest.getValue(),updateSubscriberRequest.getId());
+    @Transactional
+    public SubscriberEntity updateSubscriber(@NotNull UpdateSubscriberRequest updateSubscriberRequest) {
+
+        Optional<SubscriberEntity> subscriberEntity = findSubscribersById(updateSubscriberRequest.getId());
+
+        if (subscriberEntity.isPresent()){
+
+            String type = updateSubscriberRequest.getDataType();
+            SubscriberEntity subscriber = getSubscriberEntity(updateSubscriberRequest, subscriberEntity.get(), type);
+            dataDTDeterminer(updateSubscriberRequest.getValue(),type,subscriber);
+            return subscriberRepository.save(subscriber);
+        }else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "subscriber id not found");
+        }
+    }
+
+    @NotNull
+    private  SubscriberEntity getSubscriberEntity(@NotNull UpdateSubscriberRequest updateSubscriberRequest, SubscriberEntity subscriberEntity, String type) {
+        if (!updateSubscriberRequest.getName().isEmpty() || !updateSubscriberRequest.getName().isBlank()) {
+            subscriberEntity.setName(updateSubscriberRequest.getName());
+        }
+        if (!updateSubscriberRequest.getDescription().isEmpty() || !updateSubscriberRequest.getDescription().isBlank())
+        {
+            subscriberEntity.setDescription(updateSubscriberRequest.getDescription());
+        }
+        if (!updateSubscriberRequest.getDataType().isEmpty() || !updateSubscriberRequest.getDataType().isBlank()) {
+            subscriberEntity.setDataType(type);
+        }
+        subscriberEntity.setEnabled(updateSubscriberRequest.getEnabled());
+        return  subscriberEntity;
     }
 
     public void deleteSubscriber(Long subscriberId) {
