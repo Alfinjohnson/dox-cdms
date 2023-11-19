@@ -8,10 +8,13 @@ import com.dox.cdms.model.CreateConfigurationDataModel;
 import com.dox.cdms.model.SubscribersDataModel;
 import com.dox.cdms.payload.request.CreateConfigurationRequest;
 import com.dox.cdms.payload.request.DeleteConfigurationRequest;
+import com.dox.cdms.payload.request.GetConfigurationRequest;
 import com.dox.cdms.payload.request.UpdateConfigurationRequest;
 import com.dox.cdms.payload.response.CreateConfigurationResponse;
+import com.dox.cdms.payload.response.GetConfigurationResponse;
 import com.dox.cdms.payload.response.GetFullConfigurationResponse;
 import com.dox.cdms.repository.ConfigurationRepository;
+import com.dox.cdms.service.imp.ServiceImp;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.dox.cdms.service.imp.ServiceImp.*;
 
@@ -140,4 +144,13 @@ public class ConfigurationService {
 
     }
 
+    public GetConfigurationResponse getConfiguration(@NotNull GetConfigurationRequest getConfigurationRequest) {
+        GetConfigurationResponse getConfigurationResponse = new GetConfigurationResponse();
+        SubscriberEntity subscriberEntity = subscriberService.getSubscriberConfig(getConfigurationRequest.getName(),getConfigurationRequest.getSubscriber());
+        getConfigurationResponse.setName(getConfigurationRequest.getName());
+        getConfigurationResponse.setSubscriber(subscriberEntity.getName());
+        getConfigurationResponse.setDataType(subscriberEntity.getDataType());
+        getConfigurationResponse.setValue(ServiceImp.getDTValueMethod(subscriberEntity));
+        return  getConfigurationResponse;
+    }
 }

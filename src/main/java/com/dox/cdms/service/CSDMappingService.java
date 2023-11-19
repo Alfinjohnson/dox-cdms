@@ -50,4 +50,11 @@ public class CSDMappingService {
         return csdMappingRepository.findByConfigurationId(configId);
     }
 
+    public ArrayList<Long> findSubscriber(long configId) {
+        return csdMappingRepository.findByConfigurationId(configId);
+    }
+
+    public ArrayList<Long> findSubscriberByConfigName(Long id) {
+        return csdMappingRepository.findByConfigurationId(id);
+    }
 }

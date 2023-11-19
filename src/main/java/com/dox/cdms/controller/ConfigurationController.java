@@ -4,8 +4,10 @@ package com.dox.cdms.controller;
 import com.dox.cdms.model.CustomApiResponse;
 import com.dox.cdms.payload.request.CreateConfigurationRequest;
 import com.dox.cdms.payload.request.DeleteConfigurationRequest;
+import com.dox.cdms.payload.request.GetConfigurationRequest;
 import com.dox.cdms.payload.request.UpdateConfigurationRequest;
 import com.dox.cdms.payload.response.CreateConfigurationResponse;
+import com.dox.cdms.payload.response.GetConfigurationResponse;
 import com.dox.cdms.payload.response.GetFullConfigurationResponse;
 import com.dox.cdms.service.ConfigurationService;
 import lombok.extern.slf4j.Slf4j;
@@ -117,12 +119,24 @@ public class ConfigurationController {
     @GetMapping("/f/{name}")
     private @NotNull ResponseEntity<CustomApiResponse<GetFullConfigurationResponse>> getFullConfiguration(@NonNull @RequestParam("name") String configName) {
         logger.info("controller: getFullConfiguration");
-        getConfigurationValidationMethod(configName);
+        getFullConfigurationValidationMethod(configName);
         GetFullConfigurationResponse getFullConfiguration = configurationService.getFullConfiguration(configName);
         CustomApiResponse<GetFullConfigurationResponse> response = new CustomApiResponse<>();
         response.setStatusCode(HttpStatus.OK.value());
         response.setMessage("Success");
         response.setData(getFullConfiguration);
+        response.setTimestamp(getCurrentTime());
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping
+    private @NotNull ResponseEntity<CustomApiResponse<GetConfigurationResponse>> getConfiguration(@NonNull @RequestBody GetConfigurationRequest getConfigurationRequest) {
+        logger.info("controller: getConfiguration");
+        getConfigurationValidationMethod(getConfigurationRequest);
+        GetConfigurationResponse getFullConfigurationResponse = configurationService.getConfiguration(getConfigurationRequest);
+        CustomApiResponse<GetConfigurationResponse> response = new CustomApiResponse<>();
+        response.setStatusCode(HttpStatus.OK.value());
+        response.setMessage("Success");
+        response.setData(getFullConfigurationResponse);
         response.setTimestamp(getCurrentTime());
         return ResponseEntity.ok(response);
     }

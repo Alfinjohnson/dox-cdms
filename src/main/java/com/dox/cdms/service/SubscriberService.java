@@ -113,4 +113,8 @@ public class SubscriberService {
     }
 
     }
+
+    public SubscriberEntity getSubscriberConfig(String name, String subscriber) {
+        return subscriberRepository.getSubscriberConfig(name, subscriber);
+    }
 }

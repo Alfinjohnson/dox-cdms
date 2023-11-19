@@ -2,10 +2,7 @@ package com.dox.cdms.utility;
 
 import com.dox.cdms.expectionHandler.CustomException;
 import com.dox.cdms.model.CreateConfigurationDataModel;
-import com.dox.cdms.payload.request.CreateConfigurationRequest;
-import com.dox.cdms.payload.request.DeleteConfigurationRequest;
-import com.dox.cdms.payload.request.UpdateConfigurationRequest;
-import com.dox.cdms.payload.request.UpdateSubscriberRequest;
+import com.dox.cdms.payload.request.*;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
@@ -86,7 +83,7 @@ public final class CustomValidations {
                     "Invalid character found in input: '" + deleteConfigurationRequest.getName() + "'. Input can only contain alphabetic characters, numbers, and hyphens.");
     }
 
-    public static void getConfigurationValidationMethod(String configName) {
+    public static void getFullConfigurationValidationMethod(String configName) {
         if (isValidAlphabeticWithNumberAndHyphen(configName))
             throw new CustomException(HttpStatus.BAD_REQUEST,
                     "Invalid character found in input: '" + configName + "'. Input can only contain alphabetic characters, numbers, and hyphens.");
@@ -102,5 +99,14 @@ public final class CustomValidations {
                 throw new CustomException(HttpStatus.BAD_REQUEST,
                         "Invalid character found in input: '" + updateSubscriberRequest.getDescription() + "'. Check if the description contains only alphanumeric characters, spaces, and common punctuation marks.");
         }
+    }
+    public static  void getConfigurationValidationMethod(@NotNull GetConfigurationRequest getConfigurationRequest) {
+        if (isValidAlphabeticWithNumberAndHyphen(getConfigurationRequest.getName()))
+            throw new CustomException(HttpStatus.BAD_REQUEST,
+                    "Invalid character found in input: '" + getConfigurationRequest.getName() + "'. Input can only contain alphabetic characters, numbers, and hyphens.");
+        if (isValidAlphabeticWithNumberAndHyphen(getConfigurationRequest.getSubscriber()))
+            throw new CustomException(HttpStatus.BAD_REQUEST,
+                    "Invalid character found in input: '" + getConfigurationRequest.getSubscriber() + "'. Input can only contain alphabetic characters, numbers, and hyphens.");
+
     }
 }
