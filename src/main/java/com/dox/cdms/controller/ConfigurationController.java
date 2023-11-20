@@ -48,6 +48,7 @@ public class ConfigurationController {
     private ResponseEntity<CustomApiResponse<String>> testApplication() {
         logger.info("controller: test api");
         CustomApiResponse<String> response = new CustomApiResponse<>();
+        logger.info("response: application running successfully");
         response.setStatusCode(HttpStatus.OK.value());
         response.setMessage("Success");
         response.setData("application running successfully");
@@ -65,6 +66,7 @@ public class ConfigurationController {
         logger.info("controller: createConfiguration");
         createConfigurationValidationMethod(createConfigurationRequest);
         CreateConfigurationResponse createConfigurationResponse = configurationService.createConfiguration(createConfigurationRequest);
+        logger.info("create Configuration Response: {}",createConfigurationResponse);
         CustomApiResponse<CreateConfigurationResponse> response = new CustomApiResponse<>();
         response.setStatusCode(HttpStatus.CREATED.value());
         response.setMessage("Success");
@@ -80,7 +82,7 @@ public class ConfigurationController {
     @NonNull
     @PutMapping
     private ResponseEntity<CustomApiResponse<String>> updateConfiguration(@NonNull @RequestBody UpdateConfigurationRequest updateConfigurationRequest) {
-        log.info("controller: updateConfiguration");
+        log.info("controller: updateConfiguration {}",updateConfigurationRequest);
         updateConfigurationValidationMethod(updateConfigurationRequest);
         int createConfigurationResponse = configurationService.updateConfiguration(updateConfigurationRequest);
         if (createConfigurationResponse == 0)  throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update configuration: " + updateConfigurationRequest.getName());
@@ -100,10 +102,11 @@ public class ConfigurationController {
     @NonNull
     @DeleteMapping
     private ResponseEntity<CustomApiResponse<String>> deleteConfiguration(@NonNull @RequestBody DeleteConfigurationRequest deleteConfigurationRequest) {
-        log.info("controller: deleteConfiguration");
+        log.info("controller: deleteConfiguration {}",deleteConfigurationRequest);
         deleteConfigurationValidationMethod(deleteConfigurationRequest);
         long createConfigurationResponse = configurationService.deleteConfiguration(deleteConfigurationRequest);
         if (createConfigurationResponse == 0)  throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete configuration: " + deleteConfigurationRequest.getName());
+        logger.info("deleteConfiguration done");
         CustomApiResponse<String> response = new CustomApiResponse<>();
         response.setStatusCode(HttpStatus.ACCEPTED.value());
         response.setMessage("Success");
@@ -121,6 +124,7 @@ public class ConfigurationController {
         logger.info("controller: getFullConfiguration");
         getFullConfigurationValidationMethod(configName);
         GetFullConfigurationResponse getFullConfiguration = configurationService.getFullConfiguration(configName);
+        logger.info("Get Full Configuration Response: {}",getFullConfiguration);
         CustomApiResponse<GetFullConfigurationResponse> response = new CustomApiResponse<>();
         response.setStatusCode(HttpStatus.OK.value());
         response.setMessage("Success");
@@ -128,15 +132,22 @@ public class ConfigurationController {
         response.setTimestamp(getCurrentTime());
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * api for serving configuration on request
+     * @param getConfigurationRequest DTO
+     * @return GetConfigurationResponse
+     */
     @GetMapping
     private @NotNull ResponseEntity<CustomApiResponse<GetConfigurationResponse>> getConfiguration(@NonNull @RequestBody GetConfigurationRequest getConfigurationRequest) {
         logger.info("controller: getConfiguration");
         getConfigurationValidationMethod(getConfigurationRequest);
-        GetConfigurationResponse getFullConfigurationResponse = configurationService.getConfiguration(getConfigurationRequest);
+        GetConfigurationResponse getConfigurationResponse = configurationService.getConfiguration(getConfigurationRequest);
+        logger.info("get Configuration Response : {}",getConfigurationResponse);
         CustomApiResponse<GetConfigurationResponse> response = new CustomApiResponse<>();
         response.setStatusCode(HttpStatus.OK.value());
         response.setMessage("Success");
-        response.setData(getFullConfigurationResponse);
+        response.setData(getConfigurationResponse);
         response.setTimestamp(getCurrentTime());
         return ResponseEntity.ok(response);
     }

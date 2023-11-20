@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.dox.cdms.service.imp.ServiceImp.*;
 
@@ -127,17 +126,7 @@ public class ConfigurationService {
         return buildGetFullConfigurationResponse(configurationEntity, subscribersList);
     }
 
-    @NotNull
-    private static GetFullConfigurationResponse buildGetFullConfigurationResponse(@NotNull ConfigurationEntity configurationEntity, List<SubscribersDataModel> subscribersList) {
-        GetFullConfigurationResponse getFullConfigurationResponse = new GetFullConfigurationResponse();
-        getFullConfigurationResponse.setId(configurationEntity.getId());
-        getFullConfigurationResponse.setName(configurationEntity.getName());
-        getFullConfigurationResponse.setDescription(configurationEntity.getDescription());
-        getFullConfigurationResponse.setSubscribers(subscribersList);
-        getFullConfigurationResponse.setCreatedDateTime(configurationEntity.getCreatedDateTime());
-        getFullConfigurationResponse.setModifiedDateTime(configurationEntity.getModifiedDateTime());
-        return getFullConfigurationResponse;
-    }
+
 
     private ConfigurationEntity findConfigurationByName(String name){
         return configurationRepository.findByName(name);

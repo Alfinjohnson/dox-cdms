@@ -3,7 +3,9 @@ package com.dox.cdms.service.imp;
 import com.dox.cdms.entity.ConfigurationEntity;
 import com.dox.cdms.entity.SubscriberEntity;
 import com.dox.cdms.model.SubscribersDataModel;
+import com.dox.cdms.payload.request.UpdateSubscriberRequest;
 import com.dox.cdms.payload.response.CreateConfigurationResponse;
+import com.dox.cdms.payload.response.GetFullConfigurationResponse;
 import com.dox.cdms.service.ConfigurationService;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -61,5 +63,42 @@ public class ServiceImp {
             subscribersDataModel.setValue(ServiceImp.getDTValueMethod(subscriberEntity));
             return subscribersDataModel;
 
+    }
+
+    @NotNull
+    public static GetFullConfigurationResponse buildGetFullConfigurationResponse(@NotNull ConfigurationEntity configurationEntity, List<SubscribersDataModel> subscribersList) {
+        GetFullConfigurationResponse getFullConfigurationResponse = new GetFullConfigurationResponse();
+        getFullConfigurationResponse.setId(configurationEntity.getId());
+        getFullConfigurationResponse.setName(configurationEntity.getName());
+        getFullConfigurationResponse.setDescription(configurationEntity.getDescription());
+        getFullConfigurationResponse.setSubscribers(subscribersList);
+        getFullConfigurationResponse.setCreatedDateTime(configurationEntity.getCreatedDateTime());
+        getFullConfigurationResponse.setModifiedDateTime(configurationEntity.getModifiedDateTime());
+        return getFullConfigurationResponse;
+    }
+
+
+    @NotNull
+    public static SubscriberEntity getSubscriberEntity(@NotNull UpdateSubscriberRequest updateSubscriberRequest, SubscriberEntity subscriberEntity, String type) {
+        if (!updateSubscriberRequest.getName().isEmpty() || !updateSubscriberRequest.getName().isBlank()) {
+            subscriberEntity.setName(updateSubscriberRequest.getName());
+        }
+        if (!updateSubscriberRequest.getDescription().isEmpty() || !updateSubscriberRequest.getDescription().isBlank())
+        {
+            subscriberEntity.setDescription(updateSubscriberRequest.getDescription());
+        }
+        if (!updateSubscriberRequest.getDataType().isEmpty() || !updateSubscriberRequest.getDataType().isBlank()) {
+            subscriberEntity.setDataType(type);
+        }
+        subscriberEntity.setEnabled(updateSubscriberRequest.getEnabled());
+        return  subscriberEntity;
+    }
+
+    public static void dataDTDeterminer(Object value, @NotNull String type, SubscriberEntity subscriberEntity) {
+        if (type.equals("boolean")|| type.equals("Boolean")) subscriberEntity.setBoolean_dt(((boolean) value));
+        if (type.equals("integer")|| type.equals("int")) subscriberEntity.setInteger_dt(((Integer) value));
+        if (type.equals("float_dt")) subscriberEntity.setFloat_dt(((float) value));
+        if (type.equals("double_dt")) subscriberEntity.setDouble_dt(((double) value));
+        if (type.equals("json_dt")) subscriberEntity.setJson_dt(((String) value));
     }
 }

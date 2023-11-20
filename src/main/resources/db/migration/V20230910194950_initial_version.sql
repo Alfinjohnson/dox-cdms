@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS configuration (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,
     description TEXT,
+    enabled BOOLEAN DEFAULT true NOT NULL,
     modified_datetime TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     created_datetime TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );

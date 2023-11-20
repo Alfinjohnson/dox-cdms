@@ -21,6 +21,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
+import static com.dox.cdms.service.imp.ServiceImp.dataDTDeterminer;
+import static com.dox.cdms.service.imp.ServiceImp.getSubscriberEntity;
+
 
 /**
  * @apiNote Subscriber service
@@ -55,13 +58,6 @@ public class SubscriberService {
         return subscriberRepository.save(subscriberEntity);
     }
 
-    private void dataDTDeterminer(Object value, @NotNull String type, SubscriberEntity subscriberEntity) {
-        if (type.equals("boolean")|| type.equals("Boolean")) subscriberEntity.setBoolean_dt(((boolean) value));
-        if (type.equals("integer")|| type.equals("int")) subscriberEntity.setInteger_dt(((Integer) value));
-        if (type.equals("float_dt")) subscriberEntity.setFloat_dt(((float) value));
-        if (type.equals("double_dt")) subscriberEntity.setDouble_dt(((double) value));
-        if (type.equals("json_dt")) subscriberEntity.setJson_dt(((String) value));
-    }
 
     public Optional<SubscriberEntity> findSubscribersById(Long subscriberId) {
         return subscriberRepository.findById(subscriberId);
@@ -83,21 +79,7 @@ public class SubscriberService {
         }
     }
 
-    @NotNull
-    private  SubscriberEntity getSubscriberEntity(@NotNull UpdateSubscriberRequest updateSubscriberRequest, SubscriberEntity subscriberEntity, String type) {
-        if (!updateSubscriberRequest.getName().isEmpty() || !updateSubscriberRequest.getName().isBlank()) {
-            subscriberEntity.setName(updateSubscriberRequest.getName());
-        }
-        if (!updateSubscriberRequest.getDescription().isEmpty() || !updateSubscriberRequest.getDescription().isBlank())
-        {
-            subscriberEntity.setDescription(updateSubscriberRequest.getDescription());
-        }
-        if (!updateSubscriberRequest.getDataType().isEmpty() || !updateSubscriberRequest.getDataType().isBlank()) {
-            subscriberEntity.setDataType(type);
-        }
-        subscriberEntity.setEnabled(updateSubscriberRequest.getEnabled());
-        return  subscriberEntity;
-    }
+
 
     public void deleteSubscriber(Long subscriberId) {
         subscriberRepository.deleteById(subscriberId);
