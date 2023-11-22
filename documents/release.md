@@ -1,8 +1,10 @@
 # Features & Support
 
 
-- Non-blocking connection
+- RestAPI
 - added SSL support
 - Docker support
-- open APi support
+- Kafka Support
 - Sql schema
+- Health monitoring
+- DataDog support
