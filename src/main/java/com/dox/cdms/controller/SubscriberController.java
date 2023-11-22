@@ -21,7 +21,7 @@ import static com.dox.cdms.utility.AppConst.getCurrentTime;
 import static com.dox.cdms.utility.CustomValidations.*;
 
 /**
- * Configuration Controller class
+ * Subscriber Controller class
  */
 @RestController
 @RequestMapping("/api/v1/subscriber")
@@ -34,62 +34,112 @@ public class SubscriberController {
         this.subscriberService = subscriberService;
     }
     /**
-     * @apiNote api design for testing application
-     * @return Up on Success return, "application running successfully", String
-     * */
+     * API for testing the application.
+     *
+     * @return A ResponseEntity with a CustomApiResponse containing a success message.
+     */
     @NonNull
     @GetMapping(path = "/test")
     private ResponseEntity<CustomApiResponse<String>> testApplication() {
-        logger.info("controller: test api");
-        CustomApiResponse<String> response = new CustomApiResponse<>();
-        response.setStatusCode(HttpStatus.OK.value());
-        response.setMessage("Success");
-        response.setData("application running successfully");
-        response.setTimestamp(getCurrentTime());
-        return ResponseEntity.ok(response) ;
+        try {
+            logger.info("Controller: testApplication");
+            CustomApiResponse<String> response = new CustomApiResponse<>();
+            response.setStatusCode(HttpStatus.OK.value());
+            response.setMessage("Success");
+            response.setData("Application running successfully");
+            response.setTimestamp(getCurrentTime());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Controller: testApplication - Error: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to test application");
+        }
     }
+
+    /**
+     * Updates a subscriber by referencing the ID.
+     *
+     * @param updateSubscriberRequest DTO containing update information.
+     * @return A ResponseEntity with a CustomApiResponse containing the updated SubscriberEntity.
+     */
     @NonNull
     @PutMapping
-    private ResponseEntity<CustomApiResponse<SubscriberEntity>> updateSubscriber(@NonNull @RequestBody UpdateSubscriberRequest updateSubscriberRequest) {
-        log.info("controller: updateSubscriber");
-        updateSubscriberValidationMethod(updateSubscriberRequest);
-        SubscriberEntity updateSubscriberResponse = subscriberService.updateSubscriber(updateSubscriberRequest);
-        //if (updateSubscriberResponse == 0)  throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "unable to update subscriber");
-        //SubscribersDataModel getSubscriberResponse = subscriberService.getSubscriber(updateSubscriberRequest.getId());
-        CustomApiResponse<SubscriberEntity> response = new CustomApiResponse<>();
-        response.setStatusCode(HttpStatus.ACCEPTED.value());
-        response.setMessage("Success");
-        response.setData(updateSubscriberResponse);
-        response.setTimestamp(getCurrentTime());
-        return ResponseEntity.ok(response);
+    private ResponseEntity<CustomApiResponse<SubscriberEntity>> updateSubscriber(
+            @NonNull @RequestBody UpdateSubscriberRequest updateSubscriberRequest) {
+        try {
+            log.info("Controller: updateSubscriber");
+            updateSubscriberValidationMethod(updateSubscriberRequest);
+            SubscriberEntity updateSubscriberResponse = subscriberService.updateSubscriber(updateSubscriberRequest);
+            log.debug("UpdateSubscriberResponse: {}", updateSubscriberResponse);
+            CustomApiResponse<SubscriberEntity> response = new CustomApiResponse<>();
+            response.setStatusCode(HttpStatus.ACCEPTED.value());
+            response.setMessage("Success");
+            response.setData(updateSubscriberResponse);
+            response.setTimestamp(getCurrentTime());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Controller: updateSubscriber - Error: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update subscriber");
+        }
     }
+
+    /**
+     * Deletes a subscriber by ID.
+     *
+     * @param subscriberId The ID of the subscriber to be deleted.
+     * @return A ResponseEntity with a CustomApiResponse containing a success message.
+     */
     @NonNull
     @DeleteMapping("/{id}")
-    private ResponseEntity<CustomApiResponse<String>> deleteSubscriber(@NonNull @RequestParam("id") Long subscriberId) {
-        log.info("controller: deleteSubscriber");
-        if (subscriberId < 1)  throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "subscriber id is empty");
-        subscriberService.deleteSubscriber(subscriberId);
-        CustomApiResponse<String> response = new CustomApiResponse<>();
-        response.setStatusCode(HttpStatus.ACCEPTED.value());
-        response.setMessage("Success");
-        response.setData(subscriberId +" deleted");
-        response.setTimestamp(getCurrentTime());
-        return ResponseEntity.ok(response);
+    private ResponseEntity<CustomApiResponse<String>> deleteSubscriber(
+            @NonNull @RequestParam("id") Long subscriberId) {
+        try {
+            log.info("Controller: deleteSubscriber");
+            if (subscriberId < 1) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Subscriber ID is empty");
+            subscriberService.deleteSubscriber(subscriberId);
+            log.debug("Subscriber: {} deleted successfully", subscriberId);
+            CustomApiResponse<String> response = new CustomApiResponse<>();
+            response.setStatusCode(HttpStatus.ACCEPTED.value());
+            response.setMessage("Success");
+            response.setData(subscriberId + " deleted");
+            response.setTimestamp(getCurrentTime());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Controller: deleteSubscriber - Error: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete subscriber");
+        }
     }
     /**
-     * @return configuration Entity,
-     * @apiNote endpoint for creating new Configuration
+     * Retrieves a subscriber by ID.
+     *
+     * @param subscriberId The ID of the subscriber to retrieve.
+     * @return A ResponseEntity containing a CustomApiResponse with subscriber data.
      */
-    @GetMapping("/{id}")
-    private @NotNull ResponseEntity<CustomApiResponse<SubscribersDataModel>> getSubscriber(@NonNull @RequestParam("id") Long subscriberId) {
-        logger.info("controller: getSubscriber {}",subscriberId);
-        if (subscriberId < 1)  throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "subscriber id is empty");
-        SubscribersDataModel getSubscriberResponse = subscriberService.getSubscriber(subscriberId);
-        CustomApiResponse<SubscribersDataModel> response = new CustomApiResponse<>();
-        response.setStatusCode(HttpStatus.OK.value());
-        response.setMessage("Success");
-        response.setData(getSubscriberResponse);
-        response.setTimestamp(getCurrentTime());
-        return ResponseEntity.ok(response);
+    @RequestMapping("/{id}")
+    private @NotNull ResponseEntity<CustomApiResponse<SubscribersDataModel>> getSubscriber(
+            @NonNull @RequestParam("id") Long subscriberId) {
+        try {
+            logger.info("Controller: getSubscriber {}", subscriberId);
+            // Validate subscriberId
+            if (subscriberId < 1) {
+                logger.error("Invalid subscriber id: {}", subscriberId);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Subscriber id is empty or invalid");
+            }
+            // Retrieve subscriber data
+            SubscribersDataModel getSubscriberResponse = subscriberService.getSubscriber(subscriberId);
+            // Build response
+            CustomApiResponse<SubscribersDataModel> response = new CustomApiResponse<>();
+            response.setStatusCode(HttpStatus.OK.value());
+            response.setMessage("Success");
+            response.setData(getSubscriberResponse);
+            response.setTimestamp(getCurrentTime());
+            // Log success
+            logger.info("Controller: getSubscriber - Success for subscriberId: {}", subscriberId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            // Log error
+            logger.error("Controller: getSubscriber - Error for subscriberId {}: {}", subscriberId, e.getMessage());
+            // Return error response
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to retrieve subscriber data");
+        }
     }
 }

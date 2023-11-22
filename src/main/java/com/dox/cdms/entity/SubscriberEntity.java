@@ -12,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.time.LocalDateTime;
 
 /**
- * Entity for boolean data type
+ * Entity for subscriber
  */
 @Builder
 @AllArgsConstructor

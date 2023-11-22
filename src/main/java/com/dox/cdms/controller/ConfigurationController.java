@@ -40,115 +40,161 @@ public class ConfigurationController {
     }
 
     /**
-     * @apiNote api design for testing application
-     * @return Up on Success return, "application running successfully", String
-     * */
+     * API for testing the application.
+     *
+     * @return A ResponseEntity with a CustomApiResponse containing a success message.
+     */
     @NonNull
     @GetMapping(path = "/test")
     private ResponseEntity<CustomApiResponse<String>> testApplication() {
-        logger.info("controller: test api");
-        CustomApiResponse<String> response = new CustomApiResponse<>();
-        logger.info("response: application running successfully");
-        response.setStatusCode(HttpStatus.OK.value());
-        response.setMessage("Success");
-        response.setData("application running successfully");
-        response.setTimestamp(getCurrentTime());
-        return ResponseEntity.ok(response) ;
+        try {
+            logger.info("Controller: testApplication");
+            CustomApiResponse<String> response = new CustomApiResponse<>();
+            logger.info("Response: Application running successfully");
+            response.setStatusCode(HttpStatus.OK.value());
+            response.setMessage("Success");
+            response.setData("Application running successfully");
+            response.setTimestamp(getCurrentTime());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Controller: testApplication - Error: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to test application");
+        }
     }
 
     /**
-     * @return configuration Entity,
-     * @apiNote endpoint for creating new Configuration
+     * Creates a new configuration.
+     *
+     * @param createConfigurationRequest DTO containing configuration creation information.
+     * @return A ResponseEntity with a CustomApiResponse containing the created configuration.
      */
     @NonNull
     @PostMapping
-    private ResponseEntity<CustomApiResponse<CreateConfigurationResponse>> createConfiguration(@NonNull @RequestBody CreateConfigurationRequest createConfigurationRequest) {
-        logger.info("controller: createConfiguration");
-        createConfigurationValidationMethod(createConfigurationRequest);
-        CreateConfigurationResponse createConfigurationResponse = configurationService.createConfiguration(createConfigurationRequest);
-        logger.info("create Configuration Response: {}",createConfigurationResponse);
-        CustomApiResponse<CreateConfigurationResponse> response = new CustomApiResponse<>();
-        response.setStatusCode(HttpStatus.CREATED.value());
-        response.setMessage("Success");
-        response.setData(createConfigurationResponse);
-        response.setTimestamp(getCurrentTime());
-        return ResponseEntity.ok(response);
+    private ResponseEntity<CustomApiResponse<CreateConfigurationResponse>> createConfiguration(
+            @NonNull @RequestBody CreateConfigurationRequest createConfigurationRequest) {
+        try {
+            logger.info("Controller: createConfiguration");
+            createConfigurationValidationMethod(createConfigurationRequest);
+            CreateConfigurationResponse createConfigurationResponse = configurationService.createConfiguration(createConfigurationRequest);
+            logger.info("Create Configuration Response: {}", createConfigurationResponse);
+            CustomApiResponse<CreateConfigurationResponse> response = new CustomApiResponse<>();
+            response.setStatusCode(HttpStatus.CREATED.value());
+            response.setMessage("Success");
+            response.setData(createConfigurationResponse);
+            response.setTimestamp(getCurrentTime());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Controller: createConfiguration - Error: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create configuration");
+        }
     }
 
     /**
-     * @return configuration Entity,
-     * @apiNote endpoint for updating Configuration
+     * Updates a configuration.
+     *
+     * @param updateConfigurationRequest DTO containing configuration update information.
+     * @return A ResponseEntity with a CustomApiResponse containing a success message.
      */
     @NonNull
     @PutMapping
-    private ResponseEntity<CustomApiResponse<String>> updateConfiguration(@NonNull @RequestBody UpdateConfigurationRequest updateConfigurationRequest) {
-        log.info("controller: updateConfiguration {}",updateConfigurationRequest);
-        updateConfigurationValidationMethod(updateConfigurationRequest);
-        int createConfigurationResponse = configurationService.updateConfiguration(updateConfigurationRequest);
-        if (createConfigurationResponse == 0)  throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update configuration: " + updateConfigurationRequest.getName());
-        CustomApiResponse<String> response = new CustomApiResponse<>();
-        response.setStatusCode(HttpStatus.ACCEPTED.value());
-        response.setMessage("Success");
-        response.setData("Updated");
-        response.setTimestamp(getCurrentTime());
-        return ResponseEntity.ok(response);
+    private ResponseEntity<CustomApiResponse<String>> updateConfiguration(
+            @NonNull @RequestBody UpdateConfigurationRequest updateConfigurationRequest) {
+        try {
+            log.info("Controller: updateConfiguration {}", updateConfigurationRequest);
+            updateConfigurationValidationMethod(updateConfigurationRequest);
+            int updateConfigurationResponse = configurationService.updateConfiguration(updateConfigurationRequest);
+            if (updateConfigurationResponse == 0)
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update configuration: " + updateConfigurationRequest.getName());
+            CustomApiResponse<String> response = new CustomApiResponse<>();
+            response.setStatusCode(HttpStatus.ACCEPTED.value());
+            response.setMessage("Success");
+            response.setData("Updated");
+            response.setTimestamp(getCurrentTime());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Controller: updateConfiguration - Error: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update configuration");
+        }
     }
 
     /**
-     * TODO: delete corresponding data from cdms and subscriber entities
-     * @param deleteConfigurationRequest  deleteConfigurationRequest
-     * @return String message
+     * Deletes a configuration and its corresponding data from cdms and subscriber entities.
+     *
+     * @param deleteConfigurationRequest DTO containing configuration deletion information.
+     * @return A ResponseEntity with a CustomApiResponse containing a success message.
      */
     @NonNull
     @DeleteMapping
-    private ResponseEntity<CustomApiResponse<String>> deleteConfiguration(@NonNull @RequestBody DeleteConfigurationRequest deleteConfigurationRequest) {
-        log.info("controller: deleteConfiguration {}",deleteConfigurationRequest);
-        deleteConfigurationValidationMethod(deleteConfigurationRequest);
-        long createConfigurationResponse = configurationService.deleteConfiguration(deleteConfigurationRequest);
-        if (createConfigurationResponse == 0)  throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete configuration: " + deleteConfigurationRequest.getName());
-        logger.info("deleteConfiguration done");
-        CustomApiResponse<String> response = new CustomApiResponse<>();
-        response.setStatusCode(HttpStatus.ACCEPTED.value());
-        response.setMessage("Success");
-        response.setData(deleteConfigurationRequest.getName() +" deleted");
-        response.setTimestamp(getCurrentTime());
-        return ResponseEntity.ok(response);
+    private ResponseEntity<CustomApiResponse<String>> deleteConfiguration(
+            @NonNull @RequestBody DeleteConfigurationRequest deleteConfigurationRequest) {
+        try {
+            log.info("Controller: deleteConfiguration {}", deleteConfigurationRequest);
+            deleteConfigurationValidationMethod(deleteConfigurationRequest);
+            long deleteConfigurationResponse = configurationService.deleteConfiguration(deleteConfigurationRequest);
+            if (deleteConfigurationResponse == 0)
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete configuration: " + deleteConfigurationRequest.getName());
+            logger.info("DeleteConfiguration done");
+            CustomApiResponse<String> response = new CustomApiResponse<>();
+            response.setStatusCode(HttpStatus.ACCEPTED.value());
+            response.setMessage("Success");
+            response.setData(deleteConfigurationRequest.getName() + " deleted");
+            response.setTimestamp(getCurrentTime());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Controller: deleteConfiguration - Error: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete configuration");
+        }
     }
 
     /**
-     * @return configuration Entity,
-     * @apiNote endpoint for creating new Configuration
+     * Gets the full configuration by name.
+     *
+     * @param configName The name of the configuration to retrieve.
+     * @return A ResponseEntity with a CustomApiResponse containing the full configuration.
      */
     @GetMapping("/f/{name}")
-    private @NotNull ResponseEntity<CustomApiResponse<GetFullConfigurationResponse>> getFullConfiguration(@NonNull @RequestParam("name") String configName) {
-        logger.info("controller: getFullConfiguration");
-        getFullConfigurationValidationMethod(configName);
-        GetFullConfigurationResponse getFullConfiguration = configurationService.getFullConfiguration(configName);
-        logger.info("Get Full Configuration Response: {}",getFullConfiguration);
-        CustomApiResponse<GetFullConfigurationResponse> response = new CustomApiResponse<>();
-        response.setStatusCode(HttpStatus.OK.value());
-        response.setMessage("Success");
-        response.setData(getFullConfiguration);
-        response.setTimestamp(getCurrentTime());
-        return ResponseEntity.ok(response);
+    private @NotNull ResponseEntity<CustomApiResponse<GetFullConfigurationResponse>> getFullConfiguration(
+            @NonNull @RequestParam("name") String configName) {
+        try {
+            logger.info("Controller: getFullConfiguration");
+            getFullConfigurationValidationMethod(configName);
+            GetFullConfigurationResponse getFullConfiguration = configurationService.getFullConfiguration(configName);
+            logger.info("Get Full Configuration Response: {}", getFullConfiguration);
+            CustomApiResponse<GetFullConfigurationResponse> response = new CustomApiResponse<>();
+            response.setStatusCode(HttpStatus.OK.value());
+            response.setMessage("Success");
+            response.setData(getFullConfiguration);
+            response.setTimestamp(getCurrentTime());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Controller: getFullConfiguration - Error: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to get full configuration");
+        }
     }
 
     /**
-     * api for serving configuration on request
-     * @param getConfigurationRequest DTO
-     * @return GetConfigurationResponse
+     * Serves configuration on request.
+     *
+     * @param getConfigurationRequest DTO containing configuration retrieval information.
+     * @return A ResponseEntity with a CustomApiResponse containing the requested configuration.
      */
     @GetMapping
-    private @NotNull ResponseEntity<CustomApiResponse<GetConfigurationResponse>> getConfiguration(@NonNull @RequestBody GetConfigurationRequest getConfigurationRequest) {
-        logger.info("controller: getConfiguration");
-        getConfigurationValidationMethod(getConfigurationRequest);
-        GetConfigurationResponse getConfigurationResponse = configurationService.getConfiguration(getConfigurationRequest);
-        logger.info("get Configuration Response : {}",getConfigurationResponse);
-        CustomApiResponse<GetConfigurationResponse> response = new CustomApiResponse<>();
-        response.setStatusCode(HttpStatus.OK.value());
-        response.setMessage("Success");
-        response.setData(getConfigurationResponse);
-        response.setTimestamp(getCurrentTime());
-        return ResponseEntity.ok(response);
+    private @NotNull ResponseEntity<CustomApiResponse<GetConfigurationResponse>> getConfiguration(
+            @NonNull @RequestBody GetConfigurationRequest getConfigurationRequest) {
+        try {
+            logger.info("Controller: getConfiguration");
+            getConfigurationValidationMethod(getConfigurationRequest);
+            GetConfigurationResponse getConfigurationResponse = configurationService.getConfiguration(getConfigurationRequest);
+            logger.info("Get Configuration Response : {}", getConfigurationResponse);
+            CustomApiResponse<GetConfigurationResponse> response = new CustomApiResponse<>();
+            response.setStatusCode(HttpStatus.OK.value());
+            response.setMessage("Success");
+            response.setData(getConfigurationResponse);
+            response.setTimestamp(getCurrentTime());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Controller: getConfiguration - Error: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to get configuration");
+        }
     }
 }

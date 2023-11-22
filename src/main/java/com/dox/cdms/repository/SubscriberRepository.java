@@ -29,8 +29,7 @@ public interface SubscriberRepository extends JpaRepository<SubscriberEntity, Lo
     SELECT se FROM SubscriberEntity se
     LEFT JOIN CSDMappingEntity ce ON ce.subscriberId = se.id
     LEFT JOIN ConfigurationEntity con ON con.id = ce.configurationId
-    WHERE con.name = :configName AND se.name = :subscriberName
-""")
+    WHERE con.name = :configName AND se.name = :subscriberName""")
     SubscriberEntity getSubscriberConfig(@Param("configName") String name, @Param("subscriberName") String subscriber);
 
 }

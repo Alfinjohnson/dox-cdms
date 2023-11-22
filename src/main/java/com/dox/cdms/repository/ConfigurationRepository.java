@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 public interface ConfigurationRepository extends JpaRepository<ConfigurationEntity, Long> {
+    boolean existsByNameAndEnabledTrue(@NonNull String name);
 
 
     @Transactional
