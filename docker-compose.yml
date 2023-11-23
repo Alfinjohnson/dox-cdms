@@ -1,7 +1,7 @@
 version: '3'
 services:
   app:
-    image: cdms
+    image: your-docker-image
     ports:
       - "8443:8443"
     environment:
@@ -17,6 +17,8 @@ services:
       - SECURITY_PASSWORD=admin
       - KAFKA_HOST=kafka
       - KAFKA_PORT=29092
+      - SSL_KEYSTORE=data/ssl/keystore.p12
+      - SPRING_PROFILE=docker
     depends_on:
       - db
       - kafka
