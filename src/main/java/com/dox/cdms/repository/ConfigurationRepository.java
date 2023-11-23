@@ -14,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 public interface ConfigurationRepository extends JpaRepository<ConfigurationEntity, Long> {
-    boolean existsByNameAndEnabledTrue(@NonNull String name);
+    @Query("select (count(c) > 0) from ConfigurationEntity c where c.name = ?1 and c.enabled = true")
+    boolean existEnabledTrue(@NonNull String name);
+
 
 
     @Transactional

@@ -47,7 +47,6 @@ public class ConfigurationController {
     @NonNull
     @GetMapping(path = "/test")
     private ResponseEntity<CustomApiResponse<String>> testApplication() {
-        try {
             logger.info("Controller: testApplication");
             CustomApiResponse<String> response = new CustomApiResponse<>();
             logger.info("Response: Application running successfully");
@@ -56,10 +55,6 @@ public class ConfigurationController {
             response.setData("Application running successfully");
             response.setTimestamp(getCurrentTime());
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            logger.error("Controller: testApplication - Error: {}", e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to test application");
-        }
     }
 
     /**
@@ -72,7 +67,6 @@ public class ConfigurationController {
     @PostMapping
     private ResponseEntity<CustomApiResponse<CreateConfigurationResponse>> createConfiguration(
             @NonNull @RequestBody CreateConfigurationRequest createConfigurationRequest) {
-        try {
             logger.info("Controller: createConfiguration");
             createConfigurationValidationMethod(createConfigurationRequest);
             CreateConfigurationResponse createConfigurationResponse = configurationService.createConfiguration(createConfigurationRequest);
@@ -83,10 +77,6 @@ public class ConfigurationController {
             response.setData(createConfigurationResponse);
             response.setTimestamp(getCurrentTime());
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            logger.error("Controller: createConfiguration - Error: {}", e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create configuration");
-        }
     }
 
     /**
@@ -99,7 +89,6 @@ public class ConfigurationController {
     @PutMapping
     private ResponseEntity<CustomApiResponse<String>> updateConfiguration(
             @NonNull @RequestBody UpdateConfigurationRequest updateConfigurationRequest) {
-        try {
             log.info("Controller: updateConfiguration {}", updateConfigurationRequest);
             updateConfigurationValidationMethod(updateConfigurationRequest);
             int updateConfigurationResponse = configurationService.updateConfiguration(updateConfigurationRequest);
@@ -111,10 +100,6 @@ public class ConfigurationController {
             response.setData("Updated");
             response.setTimestamp(getCurrentTime());
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("Controller: updateConfiguration - Error: {}", e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update configuration");
-        }
     }
 
     /**
@@ -127,7 +112,6 @@ public class ConfigurationController {
     @DeleteMapping
     private ResponseEntity<CustomApiResponse<String>> deleteConfiguration(
             @NonNull @RequestBody DeleteConfigurationRequest deleteConfigurationRequest) {
-        try {
             log.info("Controller: deleteConfiguration {}", deleteConfigurationRequest);
             deleteConfigurationValidationMethod(deleteConfigurationRequest);
             long deleteConfigurationResponse = configurationService.deleteConfiguration(deleteConfigurationRequest);
@@ -140,10 +124,6 @@ public class ConfigurationController {
             response.setData(deleteConfigurationRequest.getName() + " deleted");
             response.setTimestamp(getCurrentTime());
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            logger.error("Controller: deleteConfiguration - Error: {}", e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete configuration");
-        }
     }
 
     /**
@@ -155,7 +135,6 @@ public class ConfigurationController {
     @GetMapping("/f/{name}")
     private @NotNull ResponseEntity<CustomApiResponse<GetFullConfigurationResponse>> getFullConfiguration(
             @NonNull @RequestParam("name") String configName) {
-        try {
             logger.info("Controller: getFullConfiguration");
             getFullConfigurationValidationMethod(configName);
             GetFullConfigurationResponse getFullConfiguration = configurationService.getFullConfiguration(configName);
@@ -166,10 +145,6 @@ public class ConfigurationController {
             response.setData(getFullConfiguration);
             response.setTimestamp(getCurrentTime());
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            logger.error("Controller: getFullConfiguration - Error: {}", e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to get full configuration");
-        }
     }
 
     /**
@@ -181,7 +156,6 @@ public class ConfigurationController {
     @GetMapping
     private @NotNull ResponseEntity<CustomApiResponse<GetConfigurationResponse>> getConfiguration(
             @NonNull @RequestBody GetConfigurationRequest getConfigurationRequest) {
-        try {
             logger.info("Controller: getConfiguration");
             getConfigurationValidationMethod(getConfigurationRequest);
             GetConfigurationResponse getConfigurationResponse = configurationService.getConfiguration(getConfigurationRequest);
@@ -192,9 +166,5 @@ public class ConfigurationController {
             response.setData(getConfigurationResponse);
             response.setTimestamp(getCurrentTime());
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            logger.error("Controller: getConfiguration - Error: {}", e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to get configuration");
-        }
     }
 }

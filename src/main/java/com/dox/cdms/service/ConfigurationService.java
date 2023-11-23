@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static com.dox.cdms.service.imp.ServiceImp.*;
 
@@ -59,9 +60,7 @@ public class ConfigurationService {
         if (validateConfigEntityExistByName(createConfigurationRequest.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Configuration already exists with name: " + createConfigurationRequest.getName());
         }
-
         ConfigurationEntity createdConfig = createConfigurationEntity(createConfigurationRequest);
-
         List<SubscribersDataModel> subscribersDataModelList = new ArrayList<>();
         for (CreateConfigurationDataModel configModel : createConfigurationRequest.getSubscribers()) {
             SubscriberEntity createdSubscriberEntityResponse = createSubscriber(configModel);
@@ -142,7 +141,7 @@ public class ConfigurationService {
     private @NotNull ConfigurationEntity createConfigurationEntity(@NotNull CreateConfigurationRequest createConfigurationRequest) {
         logger.info("Saving a new configuration entity...");
         ConfigurationEntity configurationEntity = new ConfigurationEntity();
-        configurationEntity.setName(createConfigurationRequest.getName());
+        configurationEntity.setName(createConfigurationRequest.getName().toLowerCase(Locale.ROOT));
         configurationEntity.setDescription(createConfigurationRequest.getDescription());
         configurationEntity.setEnabled(true);
         return configurationRepository.save(configurationEntity);
@@ -166,14 +165,20 @@ public class ConfigurationService {
      * @return The response containing full configuration details.
      */
     public GetFullConfigurationResponse getFullConfiguration(String configName) {
-        ConfigurationEntity configurationEntity = findConfigurationByName(configName);
-        List<SubscribersDataModel> subscribersList = new ArrayList<>();
-        ArrayList<Long> subscribersId = csdMappingService.findSubscriberByConfigId(configurationEntity.getId());
-        for (Long subscriberId : subscribersId) {
-            logger.info("Subscriber ID: " + subscriberId);
-            subscribersList.add(subscriberService.getSubscriber(subscriberId));
+        try {
+            ConfigurationEntity configurationEntity = findConfigurationByName(configName);
+            List<SubscribersDataModel> subscribersList = new ArrayList<>();
+            if ((configurationEntity.getId() == null) || (configurationEntity.getId() == ' ')) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"requested Configuration not found: " + configName);
+            ArrayList<Long> subscribersId = csdMappingService.findSubscriberByConfigId(configurationEntity.getId());
+            for (Long subscriberId : subscribersId) {
+                logger.info("Subscriber ID: " + subscriberId);
+                subscribersList.add(subscriberService.getSubscriber(subscriberId));
+            }
+            return buildGetFullConfigurationResponse(configurationEntity, subscribersList);
         }
-        return buildGetFullConfigurationResponse(configurationEntity, subscribersList);
+        catch (NullPointerException e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"requested Configuration not found: " + configName);
+        }
     }
 
     /**
@@ -183,7 +188,7 @@ public class ConfigurationService {
      * @return The configuration entity.
      */
     private ConfigurationEntity findConfigurationByName(String name) {
-        return configurationRepository.findByName(name);
+            return configurationRepository.findByName(name);
     }
 
     /**
@@ -194,7 +199,13 @@ public class ConfigurationService {
      */
     public GetConfigurationResponse getConfiguration(@NotNull GetConfigurationRequest getConfigurationRequest) {
         GetConfigurationResponse getConfigurationResponse = new GetConfigurationResponse();
-        if (!configurationRepository.existsByNameAndEnabledTrue(getConfigurationRequest.getName())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "configuration is disabled");;
+        try {
+            if (!configurationRepository.existEnabledTrue(getConfigurationRequest.getName())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "requested configuration disabled: " + getConfigurationRequest.getName());;
+        }catch ( Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"requested Configuration not found: " + getConfigurationRequest.getName());
+        }
+
         SubscriberEntity subscriberEntity = subscriberService.getSubscriberConfig(getConfigurationRequest.getName(), getConfigurationRequest.getSubscriber());
         logger.info("getConfiguration :{}",subscriberEntity);
         getConfigurationResponse.setName(getConfigurationRequest.getName());

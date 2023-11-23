@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
+import java.util.Locale;
 
 @Component
 public class ServiceImp {
@@ -88,7 +89,7 @@ public class ServiceImp {
     public static @NotNull SubscriberEntity getSubscriberEntity(
             @NotNull UpdateSubscriberRequest updateSubscriberRequest, SubscriberEntity subscriberEntity, String type) {
         if (!updateSubscriberRequest.getName().isEmpty() || !updateSubscriberRequest.getName().isBlank()) {
-            subscriberEntity.setName(updateSubscriberRequest.getName());
+            subscriberEntity.setName(updateSubscriberRequest.getName().toLowerCase(Locale.ROOT));
         }
         if (!updateSubscriberRequest.getDescription().isEmpty() || !updateSubscriberRequest.getDescription().isBlank()) {
             subscriberEntity.setDescription(updateSubscriberRequest.getDescription());
@@ -110,9 +111,10 @@ public class ServiceImp {
     public static void dataDTDeterminer(Object value, @NotNull String type, SubscriberEntity subscriberEntity) {
         if (type.equals("boolean") || type.equals("Boolean")) subscriberEntity.setBoolean_dt((boolean) value);
         if (type.equals("integer") || type.equals("int")) subscriberEntity.setInteger_dt((Integer) value);
-        if (type.equals("float_dt")) subscriberEntity.setFloat_dt((float) value);
-        if (type.equals("double_dt")) subscriberEntity.setDouble_dt((double) value);
-        if (type.equals("json_dt")) subscriberEntity.setJson_dt((String) value);
+        if (type.equals("float")) subscriberEntity.setFloat_dt((float) value);
+        if (type.equals("double")) subscriberEntity.setDouble_dt((double) value);
+        if (type.equals("json")) subscriberEntity.setJson_dt((String) value);
+        if (type.equals("String") || type.equals("string") ) subscriberEntity.setString_dt((String) value);
     }
 
     /**
@@ -126,9 +128,10 @@ public class ServiceImp {
         final String type = subscriberEntity.getDataType();
         if (type.equals("boolean") || type.equals("Boolean")) return subscriberEntity.getBoolean_dt();
         if (type.equals("integer") || type.equals("int")) return subscriberEntity.getInteger_dt();
-        if (type.equals("float_dt")) return subscriberEntity.getFloat_dt();
-        if (type.equals("double_dt")) return subscriberEntity.getDouble_dt();
-        if (type.equals("json_dt")) return subscriberEntity.getJson_dt();
+        if (type.equals("float")) return subscriberEntity.getFloat_dt();
+        if (type.equals("double")) return subscriberEntity.getDouble_dt();
+        if (type.equals("json")) return subscriberEntity.getJson_dt();
+        if (type.equals("String") || type.equals("string") ) return subscriberEntity.getString_dt();
         logger.info("Unable to get subscriber value id: {}, name: {}", subscriberEntity.getId(), subscriberEntity.getName());
         throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Unable to get subscriber value id: " + subscriberEntity.getId());
     }

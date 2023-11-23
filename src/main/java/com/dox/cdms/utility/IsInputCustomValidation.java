@@ -1,15 +1,16 @@
 package com.dox.cdms.utility;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import static com.dox.cdms.utility.AppConst.supportedDataTypes;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * validation class
  */
 @Slf4j(topic = "IsInputCustomValidation")
 public final class IsInputCustomValidation {
-
+    private static final ObjectMapper objectMapper = new ObjectMapper();
     public static boolean isValidAlphabeticWithNumberAndHyphen(String input) {
         log.info("isValidAlphabeticWithNumberAndHyphen: {}",input);
         if (input == null || input.isEmpty()) {
@@ -71,6 +72,43 @@ public final class IsInputCustomValidation {
         }
     }
 
+    public static boolean isValidFloat(String input) {
+        log.info("isValidFloat: {}",input);
+        try {
+            // Attempt to parse the input as an integer
+            Float.parseFloat(input);
+            log.info("isValidFloat: {} All characters in the input are valid.",input);
+            return false; // If parsing succeeds, it's a valid integer
+        } catch (NumberFormatException e) {
+            log.info("isValidFloat: {} All characters are not valid.",input);
+            return true; // If parsing fails, it's not a valid integer
+        }
+    }
+
+    public static boolean isValidDouble(String input) {
+        log.info("isValidDouble: {}",input);
+        try {
+            // Attempt to parse the input as an integer
+            Double.parseDouble(input);
+            log.info("isValidDouble: {} All characters in the input are valid.",input);
+            return false; // If parsing succeeds, it's a valid integer
+        } catch (NumberFormatException e) {
+            log.info("isValidDouble: {} All characters are not valid.",input);
+            return true; // If parsing fails, it's not a valid integer
+        }
+    }
+
+    public static boolean isValidJson(String input) {
+        try {
+            // Attempt to parse the input as JSON
+            JsonNode jsonNode = objectMapper.readTree(input);
+            // If parsing succeeds, it's a valid JSON
+            return true;
+        } catch (Exception e) {
+            // If parsing fails, it's not a valid JSON
+            return false;
+        }
+    }
     public static boolean isValidDescription(String description) {
         log.info("isValidDescription: {}",description);
         String regex = "^[a-zA-Z0-9\\s.,!?\\-()\"']+";

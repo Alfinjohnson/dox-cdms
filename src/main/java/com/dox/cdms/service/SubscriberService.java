@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Locale;
 import java.util.Optional;
 
 import static com.dox.cdms.service.imp.ServiceImp.dataDTDeterminer;
@@ -57,9 +58,9 @@ public class SubscriberService {
         try {
             logger.info("createSubscriber: {}", configModel);
             SubscriberEntity subscriberEntity = new SubscriberEntity();
-            subscriberEntity.setName(configModel.getName());
+            subscriberEntity.setName(configModel.getName().toLowerCase(Locale.ROOT));
             subscriberEntity.setDescription(configModel.getDescription());
-            subscriberEntity.setDataType(configModel.getType());
+            subscriberEntity.setDataType(configModel.getType().toLowerCase(Locale.ROOT));
             subscriberEntity.setEnabled(true);
             dataDTDeterminer(configModel.getValue(), configModel.getType(), subscriberEntity);
             return subscriberRepository.save(subscriberEntity);
@@ -97,7 +98,7 @@ public class SubscriberService {
             Optional<SubscriberEntity> subscriberEntity = findSubscribersById(updateSubscriberRequest.getId());
 
             if (subscriberEntity.isPresent()) {
-                String type = updateSubscriberRequest.getDataType();
+                String type = updateSubscriberRequest.getDataType().toLowerCase(Locale.ROOT);
                 SubscriberEntity subscriber = getSubscriberEntity(updateSubscriberRequest, subscriberEntity.get(), type);
                 dataDTDeterminer(updateSubscriberRequest.getValue(), type, subscriber);
                 return subscriberRepository.save(subscriber);
