@@ -1,0 +1,35 @@
+version: '3'
+services:
+  app:
+    image: cdms
+    ports:
+      - "8443:8443"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=dev1
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=ROOT
+      - SERVER_PORT=8443
+      - KEYSTORE_PASSWORD=rootcdms
+      - DATADOG_API_KEY=your-datadog-api-key
+      - SECURITY_USERNAME=admin
+      - SECURITY_PASSWORD=admin
+      - KAFKA_HOST=kafka
+      - KAFKA_PORT=29092
+    depends_on:
+      - db
+      - kafka
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=ROOT
+      - POSTGRES_DB=dev1
+
+  kafka:
+    image: confluentinc/cp-kafka
+    environment:
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
