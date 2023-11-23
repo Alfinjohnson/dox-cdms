@@ -199,15 +199,12 @@ public class ConfigurationService {
      */
     public GetConfigurationResponse getConfiguration(@NotNull GetConfigurationRequest getConfigurationRequest) {
         GetConfigurationResponse getConfigurationResponse = new GetConfigurationResponse();
-        try {
             if (!configurationRepository.existEnabledTrue(getConfigurationRequest.getName())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "requested configuration disabled: " + getConfigurationRequest.getName());
-        }catch ( Exception e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"requested Configuration not found: " + getConfigurationRequest.getName());
-        }
-
+                    "requested Configuration not found: " + getConfigurationRequest.getName());
         SubscriberEntity subscriberEntity = subscriberService.getSubscriberConfig(getConfigurationRequest.getName(), getConfigurationRequest.getSubscriber());
         logger.info("getConfiguration :{}",subscriberEntity);
+        if (subscriberEntity == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "requested Configuration or subscriber not found: " + getConfigurationRequest.getName());
         getConfigurationResponse.setName(getConfigurationRequest.getName());
         getConfigurationResponse.setSubscriber(subscriberEntity.getName());
         getConfigurationResponse.setDataType(subscriberEntity.getDataType());

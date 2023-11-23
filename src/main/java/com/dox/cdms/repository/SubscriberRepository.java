@@ -2,7 +2,6 @@ package com.dox.cdms.repository;
 
 
 import com.dox.cdms.entity.SubscriberEntity;
-import com.dox.cdms.model.SubscribersDataModel;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,7 +28,7 @@ public interface SubscriberRepository extends JpaRepository<SubscriberEntity, Lo
     SELECT se FROM SubscriberEntity se
     LEFT JOIN CSDMappingEntity ce ON ce.subscriberId = se.id
     LEFT JOIN ConfigurationEntity con ON con.id = ce.configurationId
-    WHERE con.name = :configName AND se.name = :subscriberName""")
+    WHERE con.name = :configName AND se.name = :subscriberName AND se.enabled =true""")
     SubscriberEntity getSubscriberConfig(@Param("configName") String name, @Param("subscriberName") String subscriber);
 
 }
