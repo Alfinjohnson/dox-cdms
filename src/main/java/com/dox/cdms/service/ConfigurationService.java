@@ -57,7 +57,7 @@ public class ConfigurationService {
     public CreateConfigurationResponse createConfiguration(@NotNull CreateConfigurationRequest createConfigurationRequest) {
         logger.info("Creating a new configuration...");
 
-        if (validateConfigEntityExistByName(createConfigurationRequest.getName())) {
+        if (validateConfigEntityExistByName(createConfigurationRequest.getName().toLowerCase(Locale.ROOT))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Configuration already exists with name: " + createConfigurationRequest.getName());
         }
         ConfigurationEntity createdConfig = createConfigurationEntity(createConfigurationRequest);
@@ -201,7 +201,7 @@ public class ConfigurationService {
         GetConfigurationResponse getConfigurationResponse = new GetConfigurationResponse();
         try {
             if (!configurationRepository.existEnabledTrue(getConfigurationRequest.getName())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "requested configuration disabled: " + getConfigurationRequest.getName());;
+                    "requested configuration disabled: " + getConfigurationRequest.getName());
         }catch ( Exception e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"requested Configuration not found: " + getConfigurationRequest.getName());
         }
