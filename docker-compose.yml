@@ -11,14 +11,10 @@ services:
       - DB_USERNAME=postgres
       - DB_PASSWORD=ROOT
       - SERVER_PORT=8443
-      - KEYSTORE_PASSWORD=rootcdms
-      - DATADOG_API_KEY=your-datadog-api-key
       - SECURITY_USERNAME=admin
       - SECURITY_PASSWORD=admin
       - KAFKA_HOST=kafka
       - KAFKA_PORT=29092
-      - SSL_KEYSTORE=data/ssl/keystore.p12
-      - SPRING_PROFILE=docker
     depends_on:
       - db
       - kafka
