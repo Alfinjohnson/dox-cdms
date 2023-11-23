@@ -33,7 +33,7 @@ import static com.dox.cdms.utility.CustomValidations.*;
 public class ConfigurationController {
 
     @Autowired
-    private final ConfigurationService configurationService;
+    private ConfigurationService configurationService;
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationController.class);
     public ConfigurationController(ConfigurationService configurationService) {
         this.configurationService = configurationService;

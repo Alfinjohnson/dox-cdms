@@ -28,7 +28,7 @@ import static com.dox.cdms.utility.CustomValidations.*;
 @Slf4j(topic = "RestSubscriberController")
 public class SubscriberController {
     @Autowired
-    private final SubscriberService subscriberService;
+    private SubscriberService subscriberService;
     private static final Logger logger = LoggerFactory.getLogger(SubscriberController.class);
     public SubscriberController(SubscriberService subscriberService) {
         this.subscriberService = subscriberService;

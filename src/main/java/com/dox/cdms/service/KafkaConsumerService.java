@@ -17,7 +17,7 @@ import static com.dox.cdms.service.imp.ServiceImp.convertMessageToDTO;
 @Service
 public class KafkaConsumerService {
     @Autowired
-    private final ConfigurationService configurationService;
+    private ConfigurationService configurationService;
 
     private static final Logger logger = LoggerFactory.getLogger(KafkaConsumerService.class);
 

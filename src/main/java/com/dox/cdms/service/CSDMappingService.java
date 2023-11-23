@@ -23,7 +23,7 @@ import java.util.ArrayList;
 @Slf4j(topic = "DataTypeService")
 public class CSDMappingService {
     @Autowired
-    private final CSDMappingRepository csdMappingRepository;
+    private  CSDMappingRepository csdMappingRepository;
 
 
     @Getter

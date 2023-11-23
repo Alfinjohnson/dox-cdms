@@ -33,8 +33,9 @@ import static com.dox.cdms.service.imp.ServiceImp.getSubscriberEntity;
 @Slf4j(topic = "SubscriberService")
 public class SubscriberService {
     @Autowired
-    private final SubscriberRepository subscriberRepository;
+    private SubscriberRepository subscriberRepository;
 
+    @Autowired
     private final ServiceImp serviceImp;
 
     private static final Logger logger = LoggerFactory.getLogger(SubscriberService.class);

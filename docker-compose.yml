@@ -1,7 +1,7 @@
 version: '3'
 services:
   app:
-    image: your-docker-image
+    image: cdms-app
     ports:
       - "8443:8443"
     environment:
@@ -22,6 +22,8 @@ services:
     depends_on:
       - db
       - kafka
+    networks:
+      - app-network
 
   db:
     image: postgres
@@ -29,9 +31,35 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=ROOT
       - POSTGRES_DB=dev1
+    networks:
+      - app-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
+    networks:
+      - app-network
 
   kafka:
-    image: confluentinc/cp-kafka
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
     environment:
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092
-      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
