@@ -1,9 +1,9 @@
 version: '3'
 services:
   app:
-    image: codeaj/cdms:0.0.2
+    image: codeaj/cdms:0.0.1
     volumes:
-      - "/data/ssl/keystore.p12: /app/ssl/keystore.p12"
+      - "/data/ssl/keystore.p12:/app/ssl/keystore.p12"
     ports:
       - "8443:8443"
     environment:
