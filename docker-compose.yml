@@ -15,8 +15,7 @@ services:
       - SERVER_PORT=8443
       - SECURITY_USERNAME=admin
       - SECURITY_PASSWORD=admin
-      - KAFKA_HOST=kafka
-      - KAFKA_PORT=29092
+      - KAFKA_LISTENERS=PLAINTEXT://kafka:9092
       - DATADOG_API_KEY=your_api_key
       - SERVER_SSL_ENABLED=true
       - KEYSTORE_PASSWORD=rootcdms
