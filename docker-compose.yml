@@ -2,6 +2,8 @@ version: '3'
 services:
   app:
     image: cdms-app1
+    volumes:
+      - "/data/ssl/keystore.p12: /app/ssl/keystore.p12"
     ports:
       - "8443:8443"
     environment:
