@@ -1,7 +1,7 @@
 version: '3'
 services:
   app:
-    image: cdms-app1
+    image: codeaj/cdms:0.0.2
     volumes:
       - "/data/ssl/keystore.p12: /app/ssl/keystore.p12"
     ports:
@@ -17,6 +17,12 @@ services:
       - SECURITY_PASSWORD=admin
       - KAFKA_HOST=kafka
       - KAFKA_PORT=29092
+      - DATADOG_API_KEY= your_api_key
+      - SERVER_SSL_ENABLED=true
+      - KEYSTORE_PASSWORD=rootcdms
+      - KEYSTORE_TYPE=PKCS12
+      - KEY_ALIAS=cdms
+      - KEY_STORE:/app/ssl/keystore.p12
     depends_on:
       - db
       - kafka
