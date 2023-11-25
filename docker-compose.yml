@@ -1,0 +1,68 @@
+version: '3'
+services:
+  app:
+    image: codeaj/cdms:0.0.1
+    volumes:
+      - 'c:/app/ssl:/app/ssl'
+    ports:
+      - "8443:8443"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=dev1
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=ROOT
+      - SERVER_PORT=8443
+      - SECURITY_USERNAME=admin
+      - SECURITY_PASSWORD=admin
+      - KAFKA_LISTENERS=PLAINTEXT://kafka:9092
+      - DATADOG_API_KEY=your_api_key
+      - SERVER_SSL_ENABLED=true
+      - KEYSTORE_PASSWORD=rootcdms
+      - KEYSTORE_TYPE=PKCS12
+      - KEY_ALIAS=cdms
+      - KEY_STORE=/app/ssl/keystore.p12
+    depends_on:
+      - db
+      - kafka
+    networks:
+      - app-network
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=ROOT
+      - POSTGRES_DB=dev1
+    networks:
+      - app-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+    ports:
+      - "22181:2181"
+    networks:
+      - app-network
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
