@@ -18,7 +18,7 @@ services:
       - KAFKA_HOST=kafka
       - KAFKA_PORT=29092
       - DATADOG_API_KEY=your_api_key
-      - SERVER_SSL_ENABLED=false
+      - SERVER_SSL_ENABLED=true
       - KEYSTORE_PASSWORD=rootcdms
       - KEYSTORE_TYPE=PKCS12
       - KEY_ALIAS=cdms
