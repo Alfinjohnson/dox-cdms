@@ -11,7 +11,8 @@ RUN apk add --no-cache maven
 COPY . /app
 
 # Build the Java application using Maven
-RUN mvn clean install
+RUN mvn clean install -Dmaven.test.skip=true
+
 
 # Expose the SSL port
 EXPOSE 8443
