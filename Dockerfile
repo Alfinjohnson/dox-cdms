@@ -3,6 +3,13 @@ FROM eclipse-temurin:17-jdk-alpine
 
 # Set the working directory in the container
 WORKDIR /app
+
+# Copy the source code into the container
+COPY . /app
+
+# Install Maven
+RUN apk --no-cache add maven
+
 # Build the Java application using Maven
 RUN mvn clean install
 # Expose the SSL port
