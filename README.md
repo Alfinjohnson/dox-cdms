@@ -1,3 +1,4 @@
+
 [![Pull Requests](https://img.shields.io/github/issues-pr/Alfinjohnson/dox-cdms.svg)](https://github.com/Alfinjohnson/dox-cdms/pulls) [![Stars](https://img.shields.io/github/stars/Alfinjohnson/dox-cdms.svg)](https://github.com/Alfinjohnson/dox-cdms/stargazers)
 # Dox CDMS Documentation
 
@@ -15,9 +16,12 @@
   - [REST API Usage](#rest-api-usage)
   - [Example: Serving Different Data Types](#example-serving-different-data-types)
   - [Example: Test API Endpoint](#example-test-api-endpoint)
+  - [Example: Get Configuration API](#example-get-configuration-api)
 - [Contributing](#contributing)
   - [Contribution Guidelines](#contribution-guidelines)
 - [Change Log](#change-log)
+- [Known Issues](#known-issues)
+- [New Contributors](#new-contributors)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
 
@@ -59,6 +63,34 @@ Access the Dox CDMS API at http://localhost:8080 or your specified port.
 ### REST API Usage
 ...
 
+### Example: Get Configuration API
+To retrieve a configuration using the Dox CDMS API, you can use the following `curl` command:
+```bash
+curl --location --request GET 'https://localhost:8443/api/v1/configuration' \
+--header 'Content-Type: application/json' \
+--data '{
+    "name": "englishlangcode",
+    "subscriber": "thridparty-server1"
+}'
+```
+
+Example Response:
+```json
+{
+    "statusCode": 200,
+    "message": "Success",
+    "timestamp": "2023-11-26 13:18:27",
+    "data": {
+        "name": "englishlangcode",
+        "subscriber": "thridparty-server1",
+        "dataType": "string",
+        "value": "eng"
+    }
+}
+```
+
+Refer to the latest release documents for the full Postman API collection.
+
 ### Example: Serving Different Data Types
 Consider a scenario where Dox CDMS serves different data types for various servers. For instance:
 - Server 1 requires JSON data.
@@ -83,7 +115,13 @@ This command is designed to test the API endpoint and receive a response. Adjust
 We welcome contributions! If you'd like to contribute to Dox CDMS, please follow our [contribution guidelines](CONTRIBUTING.md).
 
 ### Change Log
-Explore the project's history and releases in the [Change Log](CHANGELOG.md).
+Explore the project's history and releases in the [Change Log](https://github.com/Alfinjohnson/dox-cdms/commits/pre).
+
+### Known Issues
+Highlight any known issues or limitations present in this release.
+
+### New Contributors
+* @Alfinjohnson made their first contribution in [Pull Request #1](https://github.com/Alfinjohnson/dox-cdms/pull/1).
 
 ## License
 Dox CDMS is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for the full license text.
