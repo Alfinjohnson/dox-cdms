@@ -1,4 +1,3 @@
-```markdown
 # Dox CDMS Documentation
 
 ## Table of Contents
@@ -92,4 +91,3 @@ Dox CDMS is licensed under the Apache License 2.0. See the LICENSE file for the 
 
 ## Acknowledgments
 A big thank you to our contributors and the community for their continuous support.
-```
