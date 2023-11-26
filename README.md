@@ -69,6 +69,7 @@ Consider a scenario where Dox CDMS serves different data types for various serve
 - Server 2 needs integer and long values.
 - Server 3 prefers float and double values.
 - Server 4 uses string data.
+-
   Dox CDMS handles these diverse data types, ensuring each server receives the appropriate configurations seamlessly.
 
 ### Example: Test API Endpoint
@@ -91,3 +92,4 @@ Dox CDMS is licensed under the Apache License 2.0. See the LICENSE file for the 
 
 ## Acknowledgments
 A big thank you to our contributors and the community for their continuous support.
+
