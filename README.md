@@ -1,9 +1,9 @@
+[![Pull Requests](https://img.shields.io/github/issues-pr/Alfinjohnson/dox-cdms.svg)](https://github.com/Alfinjohnson/dox-cdms/pulls) [![Stars](https://img.shields.io/github/stars/Alfinjohnson/dox-cdms.svg)](https://github.com/Alfinjohnson/dox-cdms/stargazers)
 # Dox CDMS Documentation
 
 ## Table of Contents
 - [Introduction](#introduction)
   - [What Are We Trying to Solve?](#what-are-we-trying-to-solve)
-  - [Problem Statement](#problem-statement)
   - [Tech Stack](#tech-stack)
   - [Key Features](#key-features)
 - [Getting Started](#getting-started)
@@ -16,17 +16,13 @@
   - [Example: Serving Different Data Types](#example-serving-different-data-types)
   - [Example: Test API Endpoint](#example-test-api-endpoint)
 - [Contributing](#contributing)
+  - [Contribution Guidelines](#contribution-guidelines)
+- [Change Log](#change-log)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
 
 ## Introduction
-In the dynamic landscape of Software as a Service (SaaS), managing configurations across servers can be complex. Dox CDMS is a Configuration Management System designed to simplify this process, acting as a bridge between servers and ensuring each receives the precise configuration it needs.
-
-### What Are We Trying to Solve?
-In the realm of SaaS, a common challenge arises when multiple servers demand different configurations. This diversity can lead to a chaotic scenario where developers and system administrators grapple with the complexities of ensuring each server has the right settings. Dox CDMS aims to solve this problem by providing a centralized solution for configuring applications. It acts as a translating layer, harmonizing configurations across servers and eliminating the headaches associated with managing diverse settings.
-
-### Problem Statement
-Dox CDMS addresses the challenge of diverse configurations across servers. By providing a centralized system for configuring applications, it acts as a translating layer, preventing configuration-related headaches for developers and system administrators.
+In the dynamic landscape of Software as a Service (SaaS), managing configurations across multiple servers often leads to a tangled web of complexities. Imagine scenarios where each server demands a different configuration - one server prefers English language code as "eng," while another insists on "en-us." This diversity can cause headaches for developers and system administrators. Dox CDMS is a Configuration Management System designed to simplify this process, acting as a bridge between servers and ensuring each receives the precise configuration it needs.
 
 ### Tech Stack
 Dox CDMS leverages a robust tech stack:
@@ -84,10 +80,13 @@ In this example:
 This command is designed to test the API endpoint and receive a response. Adjust the URL as needed for your specific testing requirements.
 
 ## Contributing
-We welcome contributions! If you'd like to contribute to Dox CDMS, please follow our contribution guidelines.
+We welcome contributions! If you'd like to contribute to Dox CDMS, please follow our [contribution guidelines](CONTRIBUTING.md).
+
+### Change Log
+Explore the project's history and releases in the [Change Log](CHANGELOG.md).
 
 ## License
-Dox CDMS is licensed under the Apache License 2.0. See the LICENSE file for the full license text.
+Dox CDMS is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for the full license text.
 
 ## Acknowledgments
 A big thank you to our contributors and the community for their continuous support.
