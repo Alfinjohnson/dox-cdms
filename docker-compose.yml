@@ -1,7 +1,7 @@
 version: '3'
 services:
   app:
-    image: codeaj/cdms:0.0.1
+    image: codeaj/dox-cdms:0.0.1
     volumes:
       - 'c:/app/ssl:/app/ssl'
     ports:
