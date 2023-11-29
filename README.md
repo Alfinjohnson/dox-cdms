@@ -28,6 +28,8 @@
 ## Introduction
 In the dynamic landscape of Software as a Service (SaaS), managing configurations across multiple servers often leads to a tangled web of complexities. Imagine scenarios where each server demands a different configuration - one server prefers English language code as "eng," while another insists on "en-us." This diversity can cause headaches for developers and system administrators. Dox CDMS is a Configuration Management System designed to simplify this process, acting as a bridge between servers and ensuring each receives the precise configuration it needs.
 
+![cmd-arch](https://github.com/Alfinjohnson/dox-cdms/assets/56215309/19088437-1432-44eb-ad3c-24a45db04bd3)
+
 ### Tech Stack
 Dox CDMS leverages a robust tech stack:
 - Java Spring Boot
